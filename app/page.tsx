@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
-import { MapPin, Calendar, Moon, Sun, Plus, Minus, Sliders } from "lucide-react"
+import { MapPin, Calendar, Moon, Sun, Plus, Minus, Sliders, Check, Eye, Edit } from "lucide-react"
 import { useTheme } from "next-themes"
 import { MetricsGrid } from "@/components/metrics-system"
 import { ChartsGrid, availableCharts } from "@/components/charts-system"
@@ -79,7 +79,8 @@ export default function CRMDashboard() {
     { key: "customerSatisfaction", label: "Satisfacción" },
   ]
 
-  const filteredOrders = applyFilters(mockOrders, filters)
+  const filteredOrders = mockOrders
+  // const filteredOrders = applyFilters(mockOrders, filters)
   const layoutStyles = getLayoutStyles(dashboardLayout)
 
   const sortedWidgets = Object.entries(dashboardLayout.widgets)
@@ -163,7 +164,7 @@ export default function CRMDashboard() {
                       </tr>
                     </thead>
                     <tbody>
-                      {filteredOrders.slice(0, widget.rowsPerPage).map((order) => (
+                      {filteredOrders.map((order) => (
                         <tr key={order.id} className="border-b hover:bg-muted/30 transition-colors">
                           <td className="p-3">
                             <div>
@@ -293,14 +294,14 @@ export default function CRMDashboard() {
                           <td className="p-3">
                             <div className="flex items-center space-x-1">
                               <Button variant="ghost" size="sm" className="h-8 w-8 p-0" title="Ver detalles">
-                                👁️
+                                <Eye />
                               </Button>
                               <Button variant="ghost" size="sm" className="h-8 w-8 p-0" title="Editar">
-                                ✏️
+                                <Edit />
                               </Button>
                               {order.status === "Pendiente" && (
                                 <Button variant="ghost" size="sm" className="h-8 w-8 p-0" title="Aprobar">
-                                  ✅
+                                  <Check />
                                 </Button>
                               )}
                             </div>
