@@ -417,75 +417,71 @@ export const ChartsGrid = ({ period, visibleCharts }: ChartsGridProps) => {
             })}
           </div>
 
-          <div className="flex justify-center">
-            <div style={{ width: "50%" }}>
-              <ResponsiveContainer width="100%" height={350}>
-                <FunnelChart>
-                  <Tooltip
-                    content={({ active, payload }) => {
-                      if (active && payload && payload.length) {
-                        const data = payload[0].payload
-                        const currentIndex = chartData.conversionFunnel.findIndex(item => item.name === data.name)
-                        const prevData = currentIndex > 0 ? chartData.conversionFunnel[currentIndex - 1] : null
-                        const conversionRate = prevData ? ((data.value / prevData.value) * 100).toFixed(1) : "100.0"
+          <ResponsiveContainer width="100%" height={450}>
+            <FunnelChart>
+              <Tooltip
+                content={({ active, payload }) => {
+                  if (active && payload && payload.length) {
+                    const data = payload[0].payload
+                    const currentIndex = chartData.conversionFunnel.findIndex(item => item.name === data.name)
+                    const prevData = currentIndex > 0 ? chartData.conversionFunnel[currentIndex - 1] : null
+                    const conversionRate = prevData ? ((data.value / prevData.value) * 100).toFixed(1) : "100.0"
 
-                        return (
-                          <div className="bg-card border border-border rounded-lg p-3 shadow-lg">
-                            <p className="font-medium text-card-foreground">{data.name}</p>
-                            <p className="text-sm text-muted-foreground">
-                              {data.value.toLocaleString()} ({conversionRate}%)
-                            </p>
-                          </div>
-                        )
-                      }
+                    return (
+                      <div className="bg-card border border-border rounded-lg p-3 shadow-lg">
+                        <p className="font-medium text-card-foreground">{data.name}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {data.value.toLocaleString()} ({conversionRate}%)
+                        </p>
+                      </div>
+                    )
+                  }
+                  return null
+                }}
+              />
+              <Funnel dataKey="value" data={chartData.conversionFunnel} isAnimationActive>
+                <LabelList
+                  position="center"
+                  className="text-sm font-semibold"
+                  content={({ x, y, width, height, payload }: any) => {
+                    // Validar que payload existe y tiene las propiedades necesarias
+                    if (!payload || !payload.value || !payload.name) {
                       return null
-                    }}
-                  />
-                  <Funnel dataKey="value" data={chartData.conversionFunnel} isAnimationActive>
-                    <LabelList
-                      position="center"
-                      className="text-sm font-semibold"
-                      content={({ x, y, width, height, payload }: any) => {
-                        // Validar que payload existe y tiene las propiedades necesarias
-                        if (!payload || !payload.value || !payload.name) {
-                          return null
-                        }
+                    }
 
-                        const text = payload.value < 1000
-                          ? `${payload.value.toLocaleString()}`
-                          : `${payload.value.toLocaleString()}`
+                    const text = payload.value < 1000
+                      ? `${payload.value.toLocaleString()}`
+                      : `${payload.value.toLocaleString()}`
 
-                        return (
-                          <g>
-                            <rect
-                              x={x + width / 2 - text.length * 3.5}
-                              y={y + height / 2 - 10}
-                              width={text.length * 7}
-                              height={20}
-                              fill="rgba(0, 0, 0, 0.7)"
-                              rx={4}
-                              ry={4}
-                            />
-                            <text
-                              x={x + width / 2}
-                              y={y + height / 2}
-                              textAnchor="middle"
-                              dominantBaseline="middle"
-                              fill="white"
-                              fontSize="12"
-                              fontWeight="600"
-                            >
-                              {text}
-                            </text>
-                          </g>
-                        )
-                      }}
-                    />
-                  </Funnel>
-                </FunnelChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
+                    return (
+                      <g>
+                        <rect
+                          x={x + width / 2 - text.length * 3.5}
+                          y={y + height / 2 - 10}
+                          width={text.length * 7}
+                          height={20}
+                          fill="rgba(0, 0, 0, 0.7)"
+                          rx={4}
+                          ry={4}
+                        />
+                        <text
+                          x={x + width / 2}
+                          y={y + height / 2}
+                          textAnchor="middle"
+                          dominantBaseline="middle"
+                          fill="white"
+                          fontSize="12"
+                          fontWeight="600"
+                        >
+                          {text}
+                        </text>
+                      </g>
+                    )
+                  }}
+                />
+              </Funnel>
+            </FunnelChart>
+          </ResponsiveContainer>
         </div>
       ),
     },
