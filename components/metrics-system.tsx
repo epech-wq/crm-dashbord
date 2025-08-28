@@ -158,6 +158,16 @@ export const MetricCard = ({ title, data, icon: Icon, period, isLowerBetter = fa
     }
   }
 
+  const getValueColor = (change: number, isLowerBetter: boolean) => {
+    if (change === 0) return "text-foreground"
+
+    if (isLowerBetter) {
+      return change < 0 ? "text-green-600" : "text-red-500"
+    } else {
+      return change > 0 ? "text-green-600" : "text-red-500"
+    }
+  }
+
   const getTrendIcon = (change: number, isLowerBetter: boolean) => {
     if (change === 0) {
       return <Minus className="mr-1 h-4 w-4 text-muted-foreground" />
@@ -197,7 +207,9 @@ export const MetricCard = ({ title, data, icon: Icon, period, isLowerBetter = fa
         </div>
       </CardHeader>
       <CardContent className="pt-0">
-        <div className="text-3xl font-bold mb-3 text-foreground">{formatMetricValue(data.current, data.format)}</div>
+        <div className={`text-3xl font-bold mb-3 ${getValueColor(change, isLowerBetter)}`}>
+          {formatMetricValue(data.current, data.format)}
+        </div>
 
         <div className="flex items-center justify-between">
           <div className="flex items-center">
