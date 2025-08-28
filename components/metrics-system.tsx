@@ -190,7 +190,7 @@ export const MetricCard = ({ title, data, icon: Icon, period, isLowerBetter = fa
 
   return (
     <Card className="relative overflow-hidden hover:shadow-md transition-shadow duration-200 border-l-4 border-l-transparent hover:border-l-primary">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0">
         <CardTitle className="text-base font-semibold text-foreground">{title}</CardTitle>
         <div className="flex items-center space-x-2">
           <div className="p-2 rounded-full bg-primary/10">
@@ -207,18 +207,24 @@ export const MetricCard = ({ title, data, icon: Icon, period, isLowerBetter = fa
         </div>
       </CardHeader>
       <CardContent className="pt-0">
-        <div className={`text-3xl font-bold mb-3 ${getValueColor(change, isLowerBetter)}`}>
+        <div className={`text-3xl font-bold ${getValueColor(change, isLowerBetter)}`}>
           {formatMetricValue(data.current, data.format)}
         </div>
 
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            {getTrendIcon(change, isLowerBetter)}
-            <span className={`text-sm font-semibold ${getTrendColor(change, isLowerBetter)}`}>
-              {change > 0 ? "+" : ""}
-              {change.toFixed(1)}%
-            </span>
-            <span className="ml-2 text-sm text-muted-foreground">{periodLabels[period as keyof typeof periodLabels]}</span>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              {getTrendIcon(change, isLowerBetter)}
+              <span className={`text-lg font-bold ${getTrendColor(change, isLowerBetter)}`}>
+                {change > 0 ? "+" : ""}
+                {change.toFixed(1)}%
+              </span>
+              <div className="text-sm ml-1 text-muted-foreground">{periodLabels[period as keyof typeof periodLabels]}</div>
+            </div>
+            <div className="text-right">
+              <div className="text-sm font-medium text-muted-foreground">Anterior</div>
+              <div className="text-base font-semibold">{formatMetricValue(data.previous, data.format)}</div>
+            </div>
           </div>
         </div>
 
@@ -243,13 +249,7 @@ export const MetricCard = ({ title, data, icon: Icon, period, isLowerBetter = fa
           </div>
         )}
 
-        {/* Valor anterior para referencia */}
-        <div className="mt-2 pt-2 border-t border-muted/50">
-          <div className="flex justify-between items-center text-xs text-muted-foreground">
-            <span>Período anterior:</span>
-            <span className="font-medium">{formatMetricValue(data.previous, data.format)}</span>
-          </div>
-        </div>
+
       </CardContent>
     </Card>
   )
