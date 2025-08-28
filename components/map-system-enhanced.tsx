@@ -53,7 +53,10 @@ const InteractiveMap = ({
     if (!mapContainer || !leaflet || map) return
 
     // Crear el mapa
-    const newMap = leaflet.map(mapContainer).setView([19.4326, -99.1332], 5)
+    const newMap = leaflet.map(mapContainer, {
+      zoomControl: true,
+      attributionControl: true,
+    }).setView([19.4326, -99.1332], 5)
 
     // Agregar capa de OpenStreetMap
     leaflet
@@ -61,6 +64,15 @@ const InteractiveMap = ({
         attribution: "© OpenStreetMap contributors",
       })
       .addTo(newMap)
+
+    // Asegurar que el contenedor del mapa tenga z-index bajo
+    if (mapContainer) {
+      mapContainer.style.zIndex = "10"
+      const leafletContainer = mapContainer.querySelector('.leaflet-container')
+      if (leafletContainer) {
+        (leafletContainer as HTMLElement).style.zIndex = "10"
+      }
+    }
 
     setMap(newMap)
 
@@ -242,7 +254,7 @@ export const MapSystemEnhanced = ({ orders = mockOrders }: MapSystemProps) => {
   })
 
   return (
-    <Card>
+    <Card className="relative z-0">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
@@ -395,10 +407,10 @@ export const MapSystemEnhanced = ({ orders = mockOrders }: MapSystemProps) => {
                 <div className="flex items-center gap-3">
                   <div
                     className={`w-2 h-2 rounded-full ${order.status === "Completado"
-                        ? "bg-green-500"
-                        : order.status === "Pendiente"
-                          ? "bg-orange-500"
-                          : "bg-blue-500"
+                      ? "bg-green-500"
+                      : order.status === "Pendiente"
+                        ? "bg-orange-500"
+                        : "bg-blue-500"
                       }`}
                   ></div>
                   <div>
