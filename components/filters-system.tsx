@@ -605,6 +605,23 @@ export const ActiveFiltersDisplay = ({ filters, onFiltersChange, className = "" 
 }
 
 export const applyFilters = (data: Order[], filters: FilterState): Order[] => {
+  // Verificar si hay filtros activos (excluyendo el período por defecto)
+  const hasActiveFilters =
+    filters.status.length > 0 ||
+    filters.cities.length > 0 ||
+    filters.customers.length > 0 ||
+    filters.categories.length > 0 ||
+    filters.channels.length > 0 ||
+    filters.searchTerm.trim() !== "" ||
+    filters.period === "custom" ||
+    filters.amountRange.min > 0 ||
+    filters.amountRange.max < 100000
+
+  // Si no hay filtros activos, devolver todos los datos
+  if (!hasActiveFilters) {
+    return data
+  }
+
   return data.filter((item) => {
     // Filtro por fecha
     const itemDate = new Date(item.date)

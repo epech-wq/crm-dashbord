@@ -79,8 +79,7 @@ export default function CRMDashboard() {
     { key: "customerSatisfaction", label: "Satisfacción" },
   ]
 
-  const filteredOrders = mockOrders
-  // const filteredOrders = applyFilters(mockOrders, filters)
+  const filteredOrders = applyFilters(mockOrders, filters)
   const layoutStyles = getLayoutStyles(dashboardLayout)
 
   const sortedWidgets = Object.entries(dashboardLayout.widgets)
