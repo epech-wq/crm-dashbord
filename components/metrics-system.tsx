@@ -4,8 +4,10 @@ import type React from "react"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { TrendingUp, TrendingDown, DollarSign, ShoppingCart, Users, Target, Clock, Percent, Minus } from "lucide-react"
-import { generateHistoricalData } from "@/components/mock-data"
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import { TrendingUp, TrendingDown, DollarSign, ShoppingCart, Users, Target, Clock, Percent, Minus, Filter, Trash2 } from "lucide-react"
+import { generateHistoricalData, mockOrders, type Order } from "@/components/mock-data"
 
 export interface MetricData {
   current: number
@@ -243,5 +245,128 @@ export const MetricsGrid = ({ period, visibleMetrics }: MetricsGridProps) => {
         />
       ))}
     </div>
+  )
+}
+
+// Recent Orders Table Component
+interface RecentOrdersTableProps {
+  orders?: Order[]
+  showFilter?: boolean
+}
+
+export const RecentOrdersTable = ({ orders = mockOrders.slice(0, 5), showFilter = true }: RecentOrdersTableProps) => {
+  const getInitials = (name: string) => {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase()
+  }
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "Completado":
+        return "bg-green-100 text-green-800"
+      case "Pendiente":
+        return "bg-yellow-100 text-yellow-800"
+      case "En proceso":
+        return "bg-blue-100 text-blue-800"
+      case "Cancelado":
+        return "bg-red-100 text-red-800"
+      default:
+        return "bg-gray-100 text-gray-800"
+    }
+  }
+
+  const getInitialsColor = (name: string) => {
+    const colors = [
+      "bg-red-100 text-red-600",
+      "bg-orange-100 text-orange-600",
+      "bg-blue-100 text-blue-600",
+      "bg-green-100 text-green-600",
+      "bg-purple-100 text-purple-600",
+      "bg-pink-100 text-pink-600"
+    ]
+    const index = name.charCodeAt(0) % colors.length
+    return colors[index]
+  }
+
+  return (
+    <Card>
+      <CardHeader className="pb-4">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-lg font-semibold">Recent Orders</CardTitle>
+          <div className="flex items-center gap-2">
+            {showFilter && (
+              <Button variant="outline" size="sm" className="h-8 px-3">
+                <Filter className="h-4 w-4 mr-1" />
+                Filter
+              </Button>
+            )}
+            <Button variant="ghost" size="sm" className="text-sm text-muted-foreground">
+              See all
+            </Button>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="p-0">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-gray-100">
+                <th className="text-left py-3 px-6 text-sm font-medium text-gray-500">
+                  <Checkbox className="mr-3" />
+                  Deal ID
+                </th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Customer</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Product/Service</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Deal Value</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Close Date</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Status</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {orders.map((order) => (
+                <tr key={order.id} className="border-b border-gray-50 hover:bg-gray-50/50">
+                  <td className="py-4 px-6">
+                    <div className="flex items-center">
+                      <Checkbox className="mr-3" />
+                      <span className="font-medium text-sm">{order.id.replace('#ORD-', 'DE124')}</span>
+                    </div>
+                  </td>
+                  <td className="py-4 px-4">
+                    <div className="flex items-center">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium mr-3 ${getInitialsColor(order.customer)}`}>
+                        {getInitials(order.customer)}
+                      </div>
+                      <div>
+                        <div className="font-medium text-sm">{order.customer}</div>
+                        <div className="text-xs text-gray-500">{order.customerEmail}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="py-4 px-4">
+                    <div className="text-sm">{order.products[0]}</div>
+                  </td>
+                  <td className="py-4 px-4">
+                    <div className="font-medium text-sm">${order.amount.toLocaleString()}</div>
+                  </td>
+                  <td className="py-4 px-4">
+                    <div className="text-sm">{order.date}</div>
+                  </td>
+                  <td className="py-4 px-4">
+                    <Badge className={`text-xs font-medium ${getStatusColor(order.status)}`} variant="secondary">
+                      {order.status}
+                    </Badge>
+                  </td>
+                  <td className="py-4 px-4">
+                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </CardContent>
+    </Card>
   )
 }

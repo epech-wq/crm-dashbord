@@ -9,7 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { MapPin, Calendar, Moon, Sun, Plus, Minus, Sliders, Check, Eye, Edit } from "lucide-react"
 import { useTheme } from "next-themes"
-import { MetricsGrid } from "@/components/metrics-system"
+import { MetricsGrid, RecentOrdersTable } from "@/components/metrics-system"
 import { ChartsGrid, availableCharts } from "@/components/charts-system"
 import { MapSystemEnhanced } from "@/components/map-system-enhanced"
 import { FiltersSystem, defaultFilters, applyFilters, type FilterState } from "@/components/filters-system"
@@ -98,6 +98,12 @@ export default function CRMDashboard() {
         return (
           <div key={widgetKey} className={sizeClasses[widget.size]}>
             <MetricsGrid period={filters.period} visibleMetrics={dashboardLayout.visibleMetrics} />
+          </div>
+        )
+      case "recentOrders":
+        return (
+          <div key={widgetKey} className={sizeClasses[widget.size]}>
+            <RecentOrdersTable orders={filteredOrders.slice(0, widget.rowsPerPage)} />
           </div>
         )
       case "charts":
@@ -395,11 +401,13 @@ export default function CRMDashboard() {
                             {widget.visible ? <Minus className="mr-2 h-3 w-3" /> : <Plus className="mr-2 h-3 w-3" />}
                             {key === "metrics"
                               ? "Métricas"
-                              : key === "charts"
-                                ? "Gráficos"
-                                : key === "orders"
-                                  ? "Pedidos"
-                                  : "Mapa"}
+                              : key === "recentOrders"
+                                ? "Pedidos Recientes"
+                                : key === "charts"
+                                  ? "Gráficos"
+                                  : key === "orders"
+                                    ? "Pedidos"
+                                    : "Mapa"}
                           </Button>
                         ))}
                       </div>

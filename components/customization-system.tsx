@@ -26,6 +26,12 @@ export interface DashboardLayout {
       size: "small" | "medium" | "large"
       columns: number
     }
+    recentOrders: {
+      visible: boolean
+      position: number
+      size: "small" | "medium" | "large"
+      rowsPerPage: number
+    }
     charts: {
       visible: boolean
       position: number
@@ -63,8 +69,9 @@ export const defaultLayouts: DashboardLayout[] = [
     widgets: {
       metrics: { visible: true, position: 1, size: "large", columns: 4 },
       charts: { visible: true, position: 2, size: "medium", layout: "grid" },
-      orders: { visible: false, position: 3, size: "small", rowsPerPage: 5 },
-      map: { visible: true, position: 4, size: "medium", height: 300 },
+      recentOrders: { visible: true, position: 3, size: "large", rowsPerPage: 5 },
+      orders: { visible: true, position: 4, size: "large", rowsPerPage: 10 },
+      map: { visible: true, position: 5, size: "medium", height: 300 },
     },
     theme: {
       colorScheme: "blue",
@@ -97,9 +104,10 @@ export const defaultLayouts: DashboardLayout[] = [
     description: "Dashboard detallado para operaciones diarias y seguimiento de pedidos",
     widgets: {
       metrics: { visible: true, position: 1, size: "medium", columns: 6 },
-      charts: { visible: true, position: 3, size: "small", layout: "stack" },
-      orders: { visible: true, position: 2, size: "large", rowsPerPage: 15 },
-      map: { visible: true, position: 4, size: "large", height: 500 },
+      charts: { visible: true, position: 2, size: "small", layout: "stack" },
+      recentOrders: { visible: true, position: 3, size: "medium", rowsPerPage: 8 },
+      orders: { visible: true, position: 4, size: "large", rowsPerPage: 15 },
+      map: { visible: true, position: 5, size: "large", height: 500 },
     },
     theme: {
       colorScheme: "green",
@@ -131,10 +139,11 @@ export const defaultLayouts: DashboardLayout[] = [
     name: "Vista Analítica",
     description: "Dashboard centrado en análisis profundo y visualizaciones avanzadas",
     widgets: {
-      metrics: { visible: true, position: 2, size: "small", columns: 8 },
-      charts: { visible: true, position: 1, size: "large", layout: "grid" },
+      metrics: { visible: true, position: 1, size: "small", columns: 8 },
+      charts: { visible: true, position: 2, size: "large", layout: "grid" },
+      recentOrders: { visible: true, position: 3, size: "medium", rowsPerPage: 6 },
       orders: { visible: true, position: 4, size: "small", rowsPerPage: 8 },
-      map: { visible: true, position: 3, size: "medium", height: 400 },
+      map: { visible: true, position: 5, size: "medium", height: 400 },
     },
     theme: {
       colorScheme: "purple",
@@ -343,7 +352,8 @@ export const CustomizationSystem = ({ currentLayout, onLayoutChange, className =
                                   <SelectItem value="1">1° (Arriba)</SelectItem>
                                   <SelectItem value="2">2°</SelectItem>
                                   <SelectItem value="3">3°</SelectItem>
-                                  <SelectItem value="4">4° (Abajo)</SelectItem>
+                                  <SelectItem value="4">4°</SelectItem>
+                                  <SelectItem value="5">5° (Abajo)</SelectItem>
                                 </SelectContent>
                               </Select>
                             </div>
@@ -382,7 +392,7 @@ export const CustomizationSystem = ({ currentLayout, onLayoutChange, className =
                             </div>
                           )}
 
-                          {key === "orders" && (
+                          {(key === "orders" || key === "recentOrders") && (
                             <div>
                               <Label className="text-xs text-muted-foreground">Filas por página</Label>
                               <Select
