@@ -202,16 +202,16 @@ export const ChartsGrid = ({ period, visibleCharts }: ChartsGridProps) => {
   const chartConfigs = [
     {
       key: "statistics",
-      title: "Statistics",
-      description: "Target you've set for each month",
+      title: "Estadísticas",
+      description: "Objetivos que has establecido para cada mes",
       component: (
         <div>
           {/* Period selector */}
           <div className="flex justify-center mb-4">
             <div className="flex bg-muted rounded-lg p-1">
-              <button className="px-3 py-1 text-sm font-medium text-muted-foreground">Monthly</button>
-              <button className="px-3 py-1 text-sm font-medium bg-background rounded text-foreground shadow-sm">Quarterly</button>
-              <button className="px-3 py-1 text-sm font-medium text-muted-foreground">Annually</button>
+              <button className="px-3 py-1 text-sm font-medium text-muted-foreground">Mensual</button>
+              <button className="px-3 py-1 text-sm font-medium bg-background rounded text-foreground shadow-sm">Trimestral</button>
+              <button className="px-3 py-1 text-sm font-medium text-muted-foreground">Anual</button>
             </div>
           </div>
 
@@ -220,12 +220,12 @@ export const ChartsGrid = ({ period, visibleCharts }: ChartsGridProps) => {
             <div>
               <div className="text-2xl font-bold text-foreground">$212,142.12</div>
               <div className="text-sm text-green-600 font-medium">+23.2%</div>
-              <div className="text-xs text-muted-foreground">Avg. Yearly Profit</div>
+              <div className="text-xs text-muted-foreground">Ganancia Anual Promedio</div>
             </div>
             <div>
               <div className="text-2xl font-bold text-foreground">$30,321.23</div>
               <div className="text-sm text-red-600 font-medium">-12.3%</div>
-              <div className="text-xs text-muted-foreground">Avg. Yearly Profit</div>
+              <div className="text-xs text-muted-foreground">Ganancia Anual Promedio</div>
             </div>
           </div>
 
@@ -253,13 +253,13 @@ export const ChartsGrid = ({ period, visibleCharts }: ChartsGridProps) => {
     },
     {
       key: "estimatedRevenue",
-      title: "Estimated Revenue",
-      description: "Target you've set for each month",
+      title: "Ingresos Estimados",
+      description: "Objetivos que has establecido para cada mes",
       component: (
         <div className="flex items-center justify-between">
-          {/* Semi-circle chart */}
+          {/* Semi-circle chart - Increased size */}
           <div className="relative">
-            <ResponsiveContainer width={120} height={120}>
+            <ResponsiveContainer width={160} height={160}>
               <PieChart>
                 <Pie
                   data={[{ value: 90 }, { value: 10 }]}
@@ -267,8 +267,8 @@ export const ChartsGrid = ({ period, visibleCharts }: ChartsGridProps) => {
                   cy="80%"
                   startAngle={180}
                   endAngle={0}
-                  innerRadius={40}
-                  outerRadius={60}
+                  innerRadius={55}
+                  outerRadius={80}
                   dataKey="value"
                 >
                   <Cell fill="#3b82f6" />
@@ -276,8 +276,8 @@ export const ChartsGrid = ({ period, visibleCharts }: ChartsGridProps) => {
                 </Pie>
               </PieChart>
             </ResponsiveContainer>
-            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-center">
-              <div className="text-xs text-muted-foreground">June Goals</div>
+            <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 text-center">
+              <div className="text-xs text-muted-foreground">Objetivos Junio</div>
               <div className="text-2xl font-bold text-foreground">$90</div>
             </div>
           </div>
@@ -296,7 +296,7 @@ export const ChartsGrid = ({ period, visibleCharts }: ChartsGridProps) => {
             </div>
             <div>
               <div className="flex justify-between items-center mb-2">
-                <span className="text-sm text-muted-foreground">Sales</span>
+                <span className="text-sm text-muted-foreground">Ventas</span>
                 <span className="text-sm font-medium">55%</span>
               </div>
               <div className="text-lg font-bold mb-1">$20,486.00</div>
@@ -471,19 +471,19 @@ export const ChartsGrid = ({ period, visibleCharts }: ChartsGridProps) => {
     },
     {
       key: "upcomingSchedule",
-      title: "Upcoming Schedule",
-      description: "Your scheduled meetings and events",
+      title: "Próximas Citas",
+      description: "Tus reuniones y eventos programados",
       component: (
         <div className="space-y-4">
           <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/30 transition-colors">
             <div className="w-2 h-2 rounded-full bg-blue-600 mt-2 flex-shrink-0"></div>
             <div className="flex-1">
               <div className="flex justify-between items-start mb-1">
-                <span className="text-sm text-muted-foreground">Wed, 11 Jun</span>
-                <span className="text-sm font-medium">Business Analytics Pres</span>
+                <span className="text-sm text-muted-foreground">Mié, 11 Jun</span>
+                <span className="text-sm font-medium">Presentación Analytics</span>
               </div>
               <div className="text-sm font-bold mb-1">09:20 AM</div>
-              <div className="text-xs text-muted-foreground">Exploring the Future of Data-Driven +6 more</div>
+              <div className="text-xs text-muted-foreground">Explorando el Futuro de los Datos +6 más</div>
             </div>
           </div>
 
@@ -491,11 +491,11 @@ export const ChartsGrid = ({ period, visibleCharts }: ChartsGridProps) => {
             <div className="w-2 h-2 rounded-full bg-blue-600 mt-2 flex-shrink-0"></div>
             <div className="flex-1">
               <div className="flex justify-between items-start mb-1">
-                <span className="text-sm text-muted-foreground">Fri, 13 Feb</span>
-                <span className="text-sm font-medium">Business Sprint</span>
+                <span className="text-sm text-muted-foreground">Vie, 13 Feb</span>
+                <span className="text-sm font-medium">Sprint de Negocios</span>
               </div>
               <div className="text-sm font-bold mb-1">10:35 AM</div>
-              <div className="text-xs text-muted-foreground">Techniques from Business Sprint +2 more</div>
+              <div className="text-xs text-muted-foreground">Técnicas del Sprint de Negocios +2 más</div>
             </div>
           </div>
 
@@ -503,11 +503,11 @@ export const ChartsGrid = ({ period, visibleCharts }: ChartsGridProps) => {
             <div className="w-2 h-2 rounded-full bg-blue-600 mt-2 flex-shrink-0"></div>
             <div className="flex-1">
               <div className="flex justify-between items-start mb-1">
-                <span className="text-sm text-muted-foreground">Thu, 18 Mar</span>
-                <span className="text-sm font-medium">Customer Review Meeting</span>
+                <span className="text-sm text-muted-foreground">Jue, 18 Mar</span>
+                <span className="text-sm font-medium">Revisión con Cliente</span>
               </div>
-              <div className="text-sm font-bold mb-1">1:15 AM</div>
-              <div className="text-xs text-muted-foreground">Insights from the Customer Review Meeting +8 more</div>
+              <div className="text-sm font-bold mb-1">1:15 PM</div>
+              <div className="text-xs text-muted-foreground">Insights de la Revisión con Cliente +8 más</div>
             </div>
           </div>
         </div>
@@ -700,10 +700,10 @@ export const ChartsGrid = ({ period, visibleCharts }: ChartsGridProps) => {
 }
 
 export const availableCharts = [
-  { key: "statistics", label: "Statistics" },
-  { key: "estimatedRevenue", label: "Estimated Revenue" },
-  { key: "salesCategory", label: "Sales Category" },
-  { key: "upcomingSchedule", label: "Upcoming Schedule" },
+  { key: "statistics", label: "Estadísticas" },
+  { key: "estimatedRevenue", label: "Ingresos Estimados" },
+  { key: "salesCategory", label: "Categoría de Ventas" },
+  { key: "upcomingSchedule", label: "Próximas Citas" },
   { key: "salesTrend", label: "Tendencia de Ventas" },
   { key: "ordersComparison", label: "Comparación Métricas" },
   { key: "customerSegments", label: "Segmentación Clientes" },
