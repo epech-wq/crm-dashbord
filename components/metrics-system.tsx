@@ -315,16 +315,16 @@ export const RecentOrdersTable = ({ orders = mockOrders.slice(0, 5), showFilter 
     <Card>
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-semibold">Recent Orders</CardTitle>
+          <CardTitle className="text-lg font-semibold">Pedidos Recientes</CardTitle>
           <div className="flex items-center gap-2">
             {showFilter && (
               <Button variant="outline" size="sm" className="h-8 px-3">
                 <Filter className="h-4 w-4 mr-1" />
-                Filter
+                Filtrar
               </Button>
             )}
             <Button variant="ghost" size="sm" className="text-sm text-muted-foreground">
-              See all
+              Ver todos
             </Button>
           </div>
         </div>
@@ -336,14 +336,14 @@ export const RecentOrdersTable = ({ orders = mockOrders.slice(0, 5), showFilter 
               <tr className="border-b border-gray-100">
                 <th className="text-left py-3 px-6 text-sm font-medium text-gray-500">
                   <Checkbox className="mr-3" />
-                  Deal ID
+                  ID Pedido
                 </th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Customer</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Product/Service</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Deal Value</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Close Date</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Status</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Action</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Cliente</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Producto/Servicio</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Valor Pedido</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Fecha Cierre</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Estado</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Acción</th>
               </tr>
             </thead>
             <tbody>

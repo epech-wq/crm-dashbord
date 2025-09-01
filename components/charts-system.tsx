@@ -275,10 +275,10 @@ export const ChartsGrid = ({ period, visibleCharts }: ChartsGridProps) => {
       title: "Ingresos Estimados",
       description: "Objetivos que has establecido para cada mes",
       component: (
-        <div className="flex items-center justify-between">
-          {/* Semi-circle chart - Increased size */}
-          <div className="relative">
-            <ResponsiveContainer width={160} height={160}>
+        <div className="flex flex-col items-center">
+          {/* Semi-circle chart */}
+          <div className="relative mb-6">
+            <ResponsiveContainer width={180} height={140}>
               <PieChart>
                 <Pie
                   data={[{ value: 90 }, { value: 10 }]}
@@ -286,8 +286,8 @@ export const ChartsGrid = ({ period, visibleCharts }: ChartsGridProps) => {
                   cy="80%"
                   startAngle={180}
                   endAngle={0}
-                  innerRadius={55}
-                  outerRadius={80}
+                  innerRadius={50}
+                  outerRadius={75}
                   dataKey="value"
                 >
                   <Cell fill="#3b82f6" />
@@ -295,14 +295,14 @@ export const ChartsGrid = ({ period, visibleCharts }: ChartsGridProps) => {
                 </Pie>
               </PieChart>
             </ResponsiveContainer>
-            <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 text-center">
+            <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-center">
               <div className="text-xs text-muted-foreground">Objetivos Junio</div>
-              <div className="text-2xl font-bold text-foreground">$90</div>
+              <div className="text-xl font-bold text-foreground">$90</div>
             </div>
           </div>
 
-          {/* Progress bars */}
-          <div className="flex-1 ml-6 space-y-4">
+          {/* Progress bars below chart */}
+          <div className="w-full space-y-4">
             <div>
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm text-muted-foreground">Marketing</span>
@@ -703,17 +703,24 @@ export const ChartsGrid = ({ period, visibleCharts }: ChartsGridProps) => {
   const filteredCharts = chartConfigs.filter((chart) => visibleCharts.includes(chart.key))
 
   return (
-    <div className="grid gap-4 md:grid-cols-2">
-      {filteredCharts.map((chart) => (
-        <ChartCard
-          key={chart.key}
-          title={chart.title}
-          description={chart.description}
-          className=""
-        >
-          {chart.component}
-        </ChartCard>
-      ))}
+    <div className="grid gap-4 md:grid-cols-3">
+      {filteredCharts.map((chart) => {
+        // Estadísticas takes 2 columns, Ingresos Estimados takes 1 column
+        const colSpan = chart.key === "statistics" ? "md:col-span-2" :
+          chart.key === "estimatedRevenue" ? "md:col-span-1" :
+            "md:col-span-1"
+
+        return (
+          <ChartCard
+            key={chart.key}
+            title={chart.title}
+            description={chart.description}
+            className={colSpan}
+          >
+            {chart.component}
+          </ChartCard>
+        )
+      })}
     </div>
   )
 }
