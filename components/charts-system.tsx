@@ -206,15 +206,6 @@ export const ChartsGrid = ({ period, visibleCharts }: ChartsGridProps) => {
       description: "Objetivos que has establecido para cada mes",
       component: (
         <div>
-          {/* Period selector */}
-          <div className="flex justify-center mb-4">
-            <div className="flex bg-muted rounded-lg p-1">
-              <button className="px-3 py-1 text-sm font-medium text-muted-foreground">Mensual</button>
-              <button className="px-3 py-1 text-sm font-medium bg-background rounded text-foreground shadow-sm">Trimestral</button>
-              <button className="px-3 py-1 text-sm font-medium text-muted-foreground">Anual</button>
-            </div>
-          </div>
-
           {/* Statistics values */}
           <div className="grid grid-cols-2 gap-6 mb-4">
             <div>
@@ -229,23 +220,51 @@ export const ChartsGrid = ({ period, visibleCharts }: ChartsGridProps) => {
             </div>
           </div>
 
-          {/* Area chart */}
-          <ResponsiveContainer width="100%" height={120}>
+          {/* Legend */}
+          <div className="flex justify-center gap-6 mb-4">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-blue-600"></div>
+              <span className="text-sm text-muted-foreground">Período Actual</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-green-600"></div>
+              <span className="text-sm text-muted-foreground">Período Anterior</span>
+            </div>
+          </div>
+
+          {/* Area chart with two lines */}
+          <ResponsiveContainer width="100%" height={180}>
             <AreaChart data={chartData.salesData.slice(0, 8)}>
               <defs>
-                <linearGradient id="statsGradient" x1="0" y1="0" x2="0" y2="1">
+                <linearGradient id="statsGradientCurrent" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
                   <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1} />
                 </linearGradient>
+                <linearGradient id="statsGradientPrevious" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.2} />
+                  <stop offset="95%" stopColor="#10b981" stopOpacity={0.05} />
+                </linearGradient>
               </defs>
+              <XAxis dataKey="period" axisLine={false} tickLine={false} className="text-xs fill-muted-foreground" />
+              <YAxis axisLine={false} tickLine={false} className="text-xs fill-muted-foreground" />
+              <Tooltip content={<CustomTooltip />} />
               <Area
                 type="monotone"
                 dataKey="ventas"
                 stroke="#3b82f6"
                 strokeWidth={2}
-                fill="url(#statsGradient)"
+                fill="url(#statsGradientCurrent)"
+                name="Período Actual"
               />
-              <XAxis dataKey="period" axisLine={false} tickLine={false} className="text-xs fill-muted-foreground" />
+              <Area
+                type="monotone"
+                dataKey="ventasAnterior"
+                stroke="#10b981"
+                strokeWidth={2}
+                strokeDasharray="5 5"
+                fill="url(#statsGradientPrevious)"
+                name="Período Anterior"
+              />
             </AreaChart>
           </ResponsiveContainer>
         </div>
