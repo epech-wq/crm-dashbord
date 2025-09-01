@@ -139,14 +139,6 @@ interface MetricCardProps {
 
 export const MetricCard = ({ title, data, icon: Icon, period, isLowerBetter = false }: MetricCardProps) => {
   const change = calculatePercentageChange(data.current, data.previous)
-  const status = getMetricStatus(data.current, data.target, isLowerBetter)
-
-  const periodLabels = {
-    day: "vs ayer",
-    week: "vs semana anterior",
-    month: "vs mes anterior",
-    year: "vs año anterior",
-  }
 
   const getTrendColor = (change: number, isLowerBetter: boolean) => {
     if (change === 0) return "text-muted-foreground"
@@ -158,99 +150,20 @@ export const MetricCard = ({ title, data, icon: Icon, period, isLowerBetter = fa
     }
   }
 
-  const getValueColor = (change: number, isLowerBetter: boolean) => {
-    if (change === 0) return "text-foreground"
-
-    if (isLowerBetter) {
-      return change < 0 ? "text-green-600" : "text-red-500"
-    } else {
-      return change > 0 ? "text-green-600" : "text-red-500"
-    }
-  }
-
-  const getTrendIcon = (change: number, isLowerBetter: boolean) => {
-    if (change === 0) {
-      return <Minus className="mr-1 h-4 w-4 text-muted-foreground" />
-    }
-
-    if (isLowerBetter) {
-      return change < 0 ? (
-        <TrendingDown className="mr-1 h-4 w-4 text-green-600" />
-      ) : (
-        <TrendingUp className="mr-1 h-4 w-4 text-red-500" />
-      )
-    } else {
-      return change > 0 ? (
-        <TrendingUp className="mr-1 h-4 w-4 text-green-600" />
-      ) : (
-        <TrendingDown className="mr-1 h-4 w-4 text-red-500" />
-      )
-    }
-  }
-
   return (
-    <Card className="relative overflow-hidden hover:shadow-md transition-shadow duration-200 border-l-4 border-l-transparent hover:border-l-primary">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0">
-        <CardTitle className="text-base font-semibold text-foreground">{title}</CardTitle>
-        <div className="flex items-center space-x-2">
-          <div className="p-2 rounded-full bg-primary/10">
-            <Icon className="h-5 w-5 text-primary" />
-          </div>
-          {data.target && (
-            <Badge
-              variant={status === "success" ? "default" : status === "warning" ? "secondary" : "destructive"}
-              className="text-xs font-medium"
-            >
-              {status === "success" ? "✓ Meta" : status === "warning" ? "⚠ Cerca" : "✗ Bajo"}
-            </Badge>
-          )}
-        </div>
-      </CardHeader>
-      <CardContent className="pt-0">
-        <div className={`text-3xl font-bold ${getValueColor(change, isLowerBetter)}`}>
+    <Card className="p-4 hover:shadow-sm transition-shadow duration-200">
+      <div className="space-y-2">
+        <div className="text-sm font-medium text-muted-foreground">{title}</div>
+        <div className="text-2xl font-bold text-foreground">
           {formatMetricValue(data.current, data.format)}
         </div>
-
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              {getTrendIcon(change, isLowerBetter)}
-              <span className={`text-lg font-bold ${getTrendColor(change, isLowerBetter)}`}>
-                {change > 0 ? "+" : ""}
-                {change.toFixed(1)}%
-              </span>
-              <div className="text-sm ml-1 text-muted-foreground">{periodLabels[period as keyof typeof periodLabels]}</div>
-            </div>
-            <div className="text-right">
-              <div className="text-sm font-medium text-muted-foreground">Anterior</div>
-              <div className="text-base font-semibold">{formatMetricValue(data.previous, data.format)}</div>
-            </div>
-          </div>
+        <div className="flex items-center text-sm">
+          <span className={`font-medium ${getTrendColor(change, isLowerBetter)}`}>
+            {change > 0 ? "+" : ""}{change.toFixed(1)}%
+          </span>
+          <span className="text-muted-foreground ml-1">vs anterior</span>
         </div>
-
-        {data.target && (
-          <div className="mt-3 space-y-2">
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-muted-foreground">Meta:</span>
-              <span className="text-sm font-medium">{formatMetricValue(data.target, data.format)}</span>
-            </div>
-            <div className="w-full bg-muted rounded-full h-2">
-              <div
-                className={`h-2 rounded-full transition-all duration-500 ${status === "success" ? "bg-green-500" : status === "warning" ? "bg-yellow-500" : "bg-red-500"
-                  }`}
-                style={{
-                  width: `${Math.min(100, Math.max(5, (data.current / data.target) * 100))}%`,
-                }}
-              />
-            </div>
-            <div className="text-xs text-muted-foreground text-right">
-              {((data.current / data.target) * 100).toFixed(0)}% de la meta
-            </div>
-          </div>
-        )}
-
-
-      </CardContent>
+      </div>
     </Card>
   )
 }
@@ -318,7 +231,7 @@ export const MetricsGrid = ({ period, visibleMetrics }: MetricsGridProps) => {
   const filteredMetrics = metricConfigs.filter((metric) => visibleMetrics.includes(metric.key))
 
   return (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
       {filteredMetrics.map((metric) => (
         <MetricCard
           key={metric.key}
