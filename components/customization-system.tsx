@@ -91,9 +91,9 @@ export const defaultLayouts: DashboardLayout[] = [
     ],
     visibleCharts: [
       "salesTrend",
+      "salesCategory",
       "ordersComparison",
       "customerSegments",
-      "conversionFunnel",
       "categoryPerformance",
       "channelAnalysis"
     ],
@@ -127,9 +127,9 @@ export const defaultLayouts: DashboardLayout[] = [
     ],
     visibleCharts: [
       "salesTrend",
+      "salesCategory",
       "ordersComparison",
       "customerSegments",
-      "conversionFunnel",
       "categoryPerformance",
       "channelAnalysis"
     ],
@@ -163,9 +163,9 @@ export const defaultLayouts: DashboardLayout[] = [
     ],
     visibleCharts: [
       "salesTrend",
+      "salesCategory",
       "ordersComparison",
       "customerSegments",
-      "conversionFunnel",
       "categoryPerformance",
       "channelAnalysis",
     ],

@@ -67,6 +67,33 @@ export const generateChartsData = (period: string) => {
     },
   ]
 
+  // Sales Category distribution based on orders
+  const salesCategoryData = [
+    {
+      name: "Affiliate Program",
+      value: mockOrders.filter(order => order.channel === "Partner").length,
+      percentage: Math.round((mockOrders.filter(order => order.channel === "Partner").length / mockOrders.length) * 100),
+      color: "#4f46e5", // Indigo
+      products: mockOrders.filter(order => order.channel === "Partner").reduce((sum, order) => sum + order.productIds.length, 0)
+    },
+    {
+      name: "Direct Buy",
+      value: mockOrders.filter(order => order.channel === "Online" || order.channel === "Presencial").length,
+      percentage: Math.round((mockOrders.filter(order => order.channel === "Online" || order.channel === "Presencial").length / mockOrders.length) * 100),
+      color: "#3b82f6", // Blue
+      products: mockOrders.filter(order => order.channel === "Online" || order.channel === "Presencial").reduce((sum, order) => sum + order.productIds.length, 0)
+    },
+    {
+      name: "Adsense",
+      value: mockOrders.filter(order => order.channel === "Telefónico").length,
+      percentage: Math.round((mockOrders.filter(order => order.channel === "Telefónico").length / mockOrders.length) * 100),
+      color: "#93c5fd", // Light Blue
+      products: mockOrders.filter(order => order.channel === "Telefónico").reduce((sum, order) => sum + order.productIds.length, 0)
+    }
+  ]
+
+  const totalSalesProducts = salesCategoryData.reduce((sum, category) => sum + category.products, 0)
+
 
 
   // Ventas por categoría basadas en productos reales
@@ -123,7 +150,8 @@ export const generateChartsData = (period: string) => {
       period,
     },
     customerSegments,
-
+    salesCategoryData,
+    totalSalesProducts,
     categoryData,
     channelData,
     avgOrderValue,
@@ -241,6 +269,77 @@ export const ChartsGrid = ({ period, visibleCharts }: ChartsGridProps) => {
               />
             </AreaChart>
           </ResponsiveContainer>
+        </div>
+      ),
+    },
+    {
+      key: "salesCategory",
+      title: "Sales Category",
+      description: "Distribution of sales by category and channel",
+      component: (
+        <div className="flex items-center justify-between">
+          {/* Chart container */}
+          <div className="relative flex-shrink-0">
+            <ResponsiveContainer width={240} height={240}>
+              <PieChart>
+                <Pie
+                  data={chartData.salesCategoryData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={100}
+                  paddingAngle={2}
+                  dataKey="value"
+                >
+                  {chartData.salesCategoryData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip
+                  content={({ active, payload }) => {
+                    if (active && payload && payload.length) {
+                      const data = payload[0].payload
+                      return (
+                        <div className="bg-card border border-border rounded-lg p-3 shadow-lg">
+                          <p className="font-medium text-card-foreground">{data.name}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {data.percentage}% • {data.products} Products
+                          </p>
+                        </div>
+                      )
+                    }
+                    return null
+                  }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+
+            {/* Center text overlay */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+              <div className="text-xl font-bold text-foreground">Total {(chartData.totalSalesProducts / 1000).toFixed(1)}K</div>
+              <div className="text-base text-muted-foreground">{chartData.salesCategoryData.reduce((sum, cat) => sum + cat.value, 0)}</div>
+            </div>
+          </div>
+
+          {/* Legend on the right */}
+          <div className="flex-1 space-y-4">
+            {chartData.salesCategoryData.map((category, index) => (
+              <div key={index} className="flex items-start gap-3">
+                <div
+                  className="w-3 h-3 rounded-full mt-1 flex-shrink-0"
+                  style={{ backgroundColor: category.color }}
+                />
+                <div className="flex-1">
+                  <div className="text-sm font-medium text-foreground mb-1">
+                    {category.name}
+                  </div>
+                  <div className="text-lg font-bold text-foreground">
+                    {category.percentage}% • {category.products.toLocaleString()} Products
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       ),
     },
@@ -450,9 +549,9 @@ export const ChartsGrid = ({ period, visibleCharts }: ChartsGridProps) => {
 
 export const availableCharts = [
   { key: "salesTrend", label: "Tendencia de Ventas" },
+  { key: "salesCategory", label: "Sales Category" },
   { key: "ordersComparison", label: "Comparación Métricas" },
   { key: "customerSegments", label: "Segmentación Clientes" },
-
   { key: "categoryPerformance", label: "Rendimiento Categorías" },
   { key: "channelAnalysis", label: "Análisis por Canal" },
 ]
