@@ -142,15 +142,36 @@ interface MetricCardProps {
 export const MetricCard = ({ title, data, icon: Icon, period, isLowerBetter = false }: MetricCardProps) => {
   const change = calculatePercentageChange(data.current, data.previous)
 
-  const getTrendColor = (change: number, isLowerBetter: boolean) => {
-    if (change === 0) return "text-muted-foreground"
+  const getBadgeVariant = (change: number, isLowerBetter: boolean) => {
+    if (change === 0) return { variant: "secondary" as const, className: "bg-gray-100 text-gray-600 hover:bg-gray-100" }
 
     if (isLowerBetter) {
-      return change < 0 ? "text-green-600" : "text-red-500"
+      return change < 0
+        ? { variant: "secondary" as const, className: "bg-green-100 text-green-700 hover:bg-green-100" }
+        : { variant: "secondary" as const, className: "bg-red-100 text-red-700 hover:bg-red-100" }
     } else {
-      return change > 0 ? "text-green-600" : "text-red-500"
+      return change > 0
+        ? { variant: "secondary" as const, className: "bg-green-100 text-green-700 hover:bg-green-100" }
+        : { variant: "secondary" as const, className: "bg-red-100 text-red-700 hover:bg-red-100" }
     }
   }
+
+  const getPeriodText = (period: string) => {
+    switch (period) {
+      case "day":
+        return "vs día anterior"
+      case "week":
+        return "vs semana anterior"
+      case "month":
+        return "vs mes anterior"
+      case "year":
+        return "vs año anterior"
+      default:
+        return "vs anterior"
+    }
+  }
+
+  const badgeConfig = getBadgeVariant(change, isLowerBetter)
 
   return (
     <Card className="p-4 hover:shadow-sm transition-shadow duration-200">
@@ -159,11 +180,14 @@ export const MetricCard = ({ title, data, icon: Icon, period, isLowerBetter = fa
         <div className="text-2xl font-bold text-foreground">
           {formatMetricValue(data.current, data.format)}
         </div>
-        <div className="flex items-center text-sm">
-          <span className={`font-medium ${getTrendColor(change, isLowerBetter)}`}>
+        <div className="flex items-center gap-2 text-sm">
+          <Badge
+            variant={badgeConfig.variant}
+            className={`text-xs font-medium ${badgeConfig.className}`}
+          >
             {change > 0 ? "+" : ""}{change.toFixed(1)}%
-          </span>
-          <span className="text-muted-foreground ml-1">vs anterior</span>
+          </Badge>
+          <span className="text-muted-foreground">{getPeriodText(period)}</span>
         </div>
       </div>
     </Card>

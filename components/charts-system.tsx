@@ -17,8 +17,7 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  FunnelChart,
-  Funnel,
+
   LabelList,
 } from "recharts"
 import { generateChartData, mockOrders, mockCustomers, mockProducts } from "@/components/mock-data"
@@ -68,18 +67,7 @@ export const generateChartsData = (period: string) => {
     },
   ]
 
-  // Embudo de conversión realista
-  const conversionFunnel = [
-    { name: "Visitantes Web", value: 12500, fill: "#8b5cf6" }, // Púrpura
-    { name: "Leads Generados", value: 2800, fill: "#3b82f6" }, // Azul
-    { name: "Propuestas Enviadas", value: 450, fill: "#06b6d4" }, // Cian
-    { name: "Negociaciones", value: 180, fill: "#10b981" }, // Verde
-    {
-      name: "Ventas Cerradas",
-      value: mockOrders.filter((o) => o.status === "Completado").length,
-      fill: "#f59e0b", // Naranja
-    },
-  ]
+
 
   // Ventas por categoría basadas en productos reales
   const categoryData = mockProducts
@@ -135,7 +123,7 @@ export const generateChartsData = (period: string) => {
       period,
     },
     customerSegments,
-    conversionFunnel,
+
     categoryData,
     channelData,
     avgOrderValue,
@@ -357,134 +345,7 @@ export const ChartsGrid = ({ period, visibleCharts }: ChartsGridProps) => {
         </div>
       ),
     },
-    {
-      key: "conversionFunnel",
-      title: "Embudo de Conversión",
-      description: "Proceso de conversión de visitantes a compradores",
-      component: (
-        <div>
-          {/* Información estadística del embudo */}
-          <div className="mb-4 p-4 bg-muted/30 rounded-lg">
-            <div className="grid grid-cols-3 gap-4 text-center">
-              <div>
-                <div className="text-2xl font-bold text-foreground">
-                  {((chartData.conversionFunnel[chartData.conversionFunnel.length - 1].value / chartData.conversionFunnel[0].value) * 100).toFixed(1)}%
-                </div>
-                <div className="text-sm text-muted-foreground">Conversión Total</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-foreground">
-                  {chartData.conversionFunnel[0].value.toLocaleString()}
-                </div>
-                <div className="text-sm text-muted-foreground">Visitantes Iniciales</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-foreground">
-                  {chartData.conversionFunnel[chartData.conversionFunnel.length - 1].value}
-                </div>
-                <div className="text-sm text-muted-foreground">Ventas Cerradas</div>
-              </div>
-            </div>
-          </div>
 
-          {/* Leyenda de colores y tasas de conversión */}
-          <div className="mb-4 space-y-2">
-            {chartData.conversionFunnel.map((step, index) => {
-              const prevStep = index > 0 ? chartData.conversionFunnel[index - 1] : null
-              const conversionRate = prevStep ? ((step.value / prevStep.value) * 100).toFixed(1) : "100.0"
-
-              return (
-                <div key={index} className="flex items-center justify-between p-2 bg-muted/20 rounded">
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="w-4 h-4 rounded border border-border"
-                      style={{ backgroundColor: step.fill }}
-                    />
-                    <span className="text-sm font-medium text-foreground">
-                      {step.name}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <span className="text-sm font-bold text-foreground">
-                      {step.value.toLocaleString()}
-                    </span>
-                    <span className="text-sm text-muted-foreground min-w-[60px] text-right">
-                      {conversionRate}%
-                    </span>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-
-          <ResponsiveContainer width="100%" height={450}>
-            <FunnelChart>
-              <Tooltip
-                content={({ active, payload }) => {
-                  if (active && payload && payload.length) {
-                    const data = payload[0].payload
-                    const currentIndex = chartData.conversionFunnel.findIndex(item => item.name === data.name)
-                    const prevData = currentIndex > 0 ? chartData.conversionFunnel[currentIndex - 1] : null
-                    const conversionRate = prevData ? ((data.value / prevData.value) * 100).toFixed(1) : "100.0"
-
-                    return (
-                      <div className="bg-card border border-border rounded-lg p-3 shadow-lg">
-                        <p className="font-medium text-card-foreground">{data.name}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {data.value.toLocaleString()} ({conversionRate}%)
-                        </p>
-                      </div>
-                    )
-                  }
-                  return null
-                }}
-              />
-              <Funnel dataKey="value" data={chartData.conversionFunnel} isAnimationActive>
-                <LabelList
-                  position="center"
-                  className="text-sm font-semibold"
-                  content={({ x, y, width, height, payload }: any) => {
-                    // Validar que payload existe y tiene las propiedades necesarias
-                    if (!payload || !payload.value || !payload.name) {
-                      return null
-                    }
-
-                    const text = payload.value < 1000
-                      ? `${payload.value.toLocaleString()}`
-                      : `${payload.value.toLocaleString()}`
-
-                    return (
-                      <g>
-                        <rect
-                          x={x + width / 2 - text.length * 3.5}
-                          y={y + height / 2 - 10}
-                          width={text.length * 7}
-                          height={20}
-                          fill="rgba(0, 0, 0, 0.7)"
-                          rx={4}
-                          ry={4}
-                        />
-                        <text
-                          x={x + width / 2}
-                          y={y + height / 2}
-                          textAnchor="middle"
-                          dominantBaseline="middle"
-                          fill="white"
-                          fontSize="12"
-                          fontWeight="600"
-                        >
-                          {text}
-                        </text>
-                      </g>
-                    )
-                  }}
-                />
-              </Funnel>
-            </FunnelChart>
-          </ResponsiveContainer>
-        </div>
-      ),
-    },
     {
       key: "categoryPerformance",
       title: "Rendimiento por Categoría",
@@ -578,7 +439,7 @@ export const ChartsGrid = ({ period, visibleCharts }: ChartsGridProps) => {
           key={chart.key}
           title={chart.title}
           description={chart.description}
-          className={chart.key === "conversionFunnel" ? "md:col-span-2" : ""}
+          className=""
         >
           {chart.component}
         </ChartCard>
@@ -591,7 +452,7 @@ export const availableCharts = [
   { key: "salesTrend", label: "Tendencia de Ventas" },
   { key: "ordersComparison", label: "Comparación Métricas" },
   { key: "customerSegments", label: "Segmentación Clientes" },
-  { key: "conversionFunnel", label: "Embudo Conversión" },
+
   { key: "categoryPerformance", label: "Rendimiento Categorías" },
   { key: "channelAnalysis", label: "Análisis por Canal" },
 ]
