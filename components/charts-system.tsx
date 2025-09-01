@@ -201,6 +201,114 @@ export const ChartsGrid = ({ period, visibleCharts }: ChartsGridProps) => {
 
   const chartConfigs = [
     {
+      key: "statistics",
+      title: "Statistics",
+      description: "Target you've set for each month",
+      component: (
+        <div>
+          {/* Period selector */}
+          <div className="flex justify-center mb-4">
+            <div className="flex bg-muted rounded-lg p-1">
+              <button className="px-3 py-1 text-sm font-medium text-muted-foreground">Monthly</button>
+              <button className="px-3 py-1 text-sm font-medium bg-background rounded text-foreground shadow-sm">Quarterly</button>
+              <button className="px-3 py-1 text-sm font-medium text-muted-foreground">Annually</button>
+            </div>
+          </div>
+
+          {/* Statistics values */}
+          <div className="grid grid-cols-2 gap-6 mb-4">
+            <div>
+              <div className="text-2xl font-bold text-foreground">$212,142.12</div>
+              <div className="text-sm text-green-600 font-medium">+23.2%</div>
+              <div className="text-xs text-muted-foreground">Avg. Yearly Profit</div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-foreground">$30,321.23</div>
+              <div className="text-sm text-red-600 font-medium">-12.3%</div>
+              <div className="text-xs text-muted-foreground">Avg. Yearly Profit</div>
+            </div>
+          </div>
+
+          {/* Area chart */}
+          <ResponsiveContainer width="100%" height={120}>
+            <AreaChart data={chartData.salesData.slice(0, 8)}>
+              <defs>
+                <linearGradient id="statsGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1} />
+                </linearGradient>
+              </defs>
+              <Area
+                type="monotone"
+                dataKey="ventas"
+                stroke="#3b82f6"
+                strokeWidth={2}
+                fill="url(#statsGradient)"
+              />
+              <XAxis dataKey="period" axisLine={false} tickLine={false} className="text-xs fill-muted-foreground" />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      ),
+    },
+    {
+      key: "estimatedRevenue",
+      title: "Estimated Revenue",
+      description: "Target you've set for each month",
+      component: (
+        <div className="flex items-center justify-between">
+          {/* Semi-circle chart */}
+          <div className="relative">
+            <ResponsiveContainer width={120} height={120}>
+              <PieChart>
+                <Pie
+                  data={[{ value: 90 }, { value: 10 }]}
+                  cx="50%"
+                  cy="80%"
+                  startAngle={180}
+                  endAngle={0}
+                  innerRadius={40}
+                  outerRadius={60}
+                  dataKey="value"
+                >
+                  <Cell fill="#3b82f6" />
+                  <Cell fill="#e5e7eb" />
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-center">
+              <div className="text-xs text-muted-foreground">June Goals</div>
+              <div className="text-2xl font-bold text-foreground">$90</div>
+            </div>
+          </div>
+
+          {/* Progress bars */}
+          <div className="flex-1 ml-6 space-y-4">
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm text-muted-foreground">Marketing</span>
+                <span className="text-sm font-medium">85%</span>
+              </div>
+              <div className="text-lg font-bold mb-1">$30,569.00</div>
+              <div className="w-full bg-muted rounded-full h-2">
+                <div className="bg-blue-600 h-2 rounded-full" style={{ width: '85%' }}></div>
+              </div>
+            </div>
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm text-muted-foreground">Sales</span>
+                <span className="text-sm font-medium">55%</span>
+              </div>
+              <div className="text-lg font-bold mb-1">$20,486.00</div>
+              <div className="w-full bg-muted rounded-full h-2">
+                <div className="bg-blue-600 h-2 rounded-full" style={{ width: '55%' }}></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
       key: "salesTrend",
       title: "Tendencia de Ventas",
       description: `Evolución de ventas por ${period === "day" ? "hora" : period === "week" ? "día" : period === "month" ? "día" : "mes"}`,
@@ -359,6 +467,50 @@ export const ChartsGrid = ({ period, visibleCharts }: ChartsGridProps) => {
             <Bar dataKey="clientes" fill="#10b981" name="Clientes" radius={[2, 2, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
+      ),
+    },
+    {
+      key: "upcomingSchedule",
+      title: "Upcoming Schedule",
+      description: "Your scheduled meetings and events",
+      component: (
+        <div className="space-y-4">
+          <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/30 transition-colors">
+            <div className="w-2 h-2 rounded-full bg-blue-600 mt-2 flex-shrink-0"></div>
+            <div className="flex-1">
+              <div className="flex justify-between items-start mb-1">
+                <span className="text-sm text-muted-foreground">Wed, 11 Jun</span>
+                <span className="text-sm font-medium">Business Analytics Pres</span>
+              </div>
+              <div className="text-sm font-bold mb-1">09:20 AM</div>
+              <div className="text-xs text-muted-foreground">Exploring the Future of Data-Driven +6 more</div>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/30 transition-colors">
+            <div className="w-2 h-2 rounded-full bg-blue-600 mt-2 flex-shrink-0"></div>
+            <div className="flex-1">
+              <div className="flex justify-between items-start mb-1">
+                <span className="text-sm text-muted-foreground">Fri, 13 Feb</span>
+                <span className="text-sm font-medium">Business Sprint</span>
+              </div>
+              <div className="text-sm font-bold mb-1">10:35 AM</div>
+              <div className="text-xs text-muted-foreground">Techniques from Business Sprint +2 more</div>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/30 transition-colors">
+            <div className="w-2 h-2 rounded-full bg-blue-600 mt-2 flex-shrink-0"></div>
+            <div className="flex-1">
+              <div className="flex justify-between items-start mb-1">
+                <span className="text-sm text-muted-foreground">Thu, 18 Mar</span>
+                <span className="text-sm font-medium">Customer Review Meeting</span>
+              </div>
+              <div className="text-sm font-bold mb-1">1:15 AM</div>
+              <div className="text-xs text-muted-foreground">Insights from the Customer Review Meeting +8 more</div>
+            </div>
+          </div>
+        </div>
       ),
     },
     {
@@ -548,8 +700,11 @@ export const ChartsGrid = ({ period, visibleCharts }: ChartsGridProps) => {
 }
 
 export const availableCharts = [
-  { key: "salesTrend", label: "Tendencia de Ventas" },
+  { key: "statistics", label: "Statistics" },
+  { key: "estimatedRevenue", label: "Estimated Revenue" },
   { key: "salesCategory", label: "Sales Category" },
+  { key: "upcomingSchedule", label: "Upcoming Schedule" },
+  { key: "salesTrend", label: "Tendencia de Ventas" },
   { key: "ordersComparison", label: "Comparación Métricas" },
   { key: "customerSegments", label: "Segmentación Clientes" },
   { key: "categoryPerformance", label: "Rendimiento Categorías" },

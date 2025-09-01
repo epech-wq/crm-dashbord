@@ -90,12 +90,10 @@ export const defaultLayouts: DashboardLayout[] = [
       "customerSatisfaction"
     ],
     visibleCharts: [
-      "salesTrend",
+      "statistics",
+      "estimatedRevenue",
       "salesCategory",
-      "ordersComparison",
-      "customerSegments",
-      "categoryPerformance",
-      "channelAnalysis"
+      "upcomingSchedule"
     ],
   },
   {
