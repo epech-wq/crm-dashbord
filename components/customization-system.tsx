@@ -93,7 +93,8 @@ export const defaultLayouts: DashboardLayout[] = [
       "statistics",
       "estimatedRevenue",
       "salesCategory",
-      "upcomingSchedule"
+      "upcomingSchedule",
+      "trafficStats"
     ],
   },
   {

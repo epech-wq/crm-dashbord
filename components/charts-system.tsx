@@ -698,6 +698,119 @@ export const ChartsGrid = ({ period, visibleCharts }: ChartsGridProps) => {
         </ResponsiveContainer>
       ),
     },
+    {
+      key: "trafficStats",
+      title: "Traffic Stats",
+      description: "Estadísticas de tráfico y rendimiento del sitio web",
+      component: (
+        <div className="space-y-6">
+          {/* Traffic Metrics */}
+          <div className="space-y-6">
+            {/* New Subscribers */}
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <div className="text-sm text-muted-foreground mb-1">New Subscribers</div>
+                <div className="text-3xl font-bold text-foreground mb-1">567K</div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-green-600">+3.85%</span>
+                  <span className="text-sm text-muted-foreground">then last Week</span>
+                </div>
+              </div>
+              <div className="w-24 h-12">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={[
+                    { value: 20 }, { value: 25 }, { value: 22 }, { value: 28 },
+                    { value: 26 }, { value: 30 }, { value: 32 }, { value: 29 }
+                  ]}>
+                    <defs>
+                      <linearGradient id="subscribersGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="#10b981" stopOpacity={0.1} />
+                      </linearGradient>
+                    </defs>
+                    <Area
+                      type="monotone"
+                      dataKey="value"
+                      stroke="#10b981"
+                      strokeWidth={2}
+                      fill="url(#subscribersGradient)"
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Conversion Rate */}
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <div className="text-sm text-muted-foreground mb-1">Conversion Rate</div>
+                <div className="text-3xl font-bold text-foreground mb-1">276K</div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-red-600">-5.39%</span>
+                  <span className="text-sm text-muted-foreground">then last Week</span>
+                </div>
+              </div>
+              <div className="w-24 h-12">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={[
+                    { value: 35 }, { value: 32 }, { value: 28 }, { value: 30 },
+                    { value: 25 }, { value: 27 }, { value: 24 }, { value: 22 }
+                  ]}>
+                    <defs>
+                      <linearGradient id="conversionGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="#10b981" stopOpacity={0.1} />
+                      </linearGradient>
+                    </defs>
+                    <Area
+                      type="monotone"
+                      dataKey="value"
+                      stroke="#10b981"
+                      strokeWidth={2}
+                      fill="url(#conversionGradient)"
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Page Bounce Rate */}
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <div className="text-sm text-muted-foreground mb-1">Page Bounce Rate</div>
+                <div className="text-3xl font-bold text-foreground mb-1">285</div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-green-600">+12.74%</span>
+                  <span className="text-sm text-muted-foreground">then last Week</span>
+                </div>
+              </div>
+              <div className="w-24 h-12">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={[
+                    { value: 18 }, { value: 20 }, { value: 22 }, { value: 25 },
+                    { value: 28 }, { value: 30 }, { value: 32 }, { value: 35 }
+                  ]}>
+                    <defs>
+                      <linearGradient id="bounceGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="#10b981" stopOpacity={0.1} />
+                      </linearGradient>
+                    </defs>
+                    <Area
+                      type="monotone"
+                      dataKey="value"
+                      stroke="#10b981"
+                      strokeWidth={2}
+                      fill="url(#bounceGradient)"
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
+    },
   ]
 
   const filteredCharts = chartConfigs.filter((chart) => visibleCharts.includes(chart.key))
@@ -706,11 +819,12 @@ export const ChartsGrid = ({ period, visibleCharts }: ChartsGridProps) => {
     <div className="grid gap-4 md:grid-cols-6">
       {filteredCharts.map((chart) => {
         // Define column spans: Estadísticas=4 cols, Ingresos Estimados=2 cols, Sales Category=3 cols (half), Próximas Citas=3 cols, others=2 cols
-        const colSpan = chart.key === "statistics" ? "md:col-span-4" :
-          chart.key === "estimatedRevenue" ? "md:col-span-2" :
-            chart.key === "salesCategory" ? "md:col-span-3" :
-              chart.key === "upcomingSchedule" ? "md:col-span-3" :
-                "md:col-span-2"
+        const colSpan = chart.key === "trafficStats" ? "md:col-span-2" :
+          chart.key === "statistics" ? "md:col-span-4" :
+            chart.key === "estimatedRevenue" ? "md:col-span-2" :
+              chart.key === "salesCategory" ? "md:col-span-3" :
+                chart.key === "upcomingSchedule" ? "md:col-span-3" :
+                  "md:col-span-2"
 
         return (
           <ChartCard
@@ -727,6 +841,8 @@ export const ChartsGrid = ({ period, visibleCharts }: ChartsGridProps) => {
   )
 }
 
+
+
 export const availableCharts = [
   { key: "statistics", label: "Estadísticas" },
   { key: "estimatedRevenue", label: "Ingresos Estimados" },
@@ -737,4 +853,5 @@ export const availableCharts = [
   { key: "customerSegments", label: "Segmentación Clientes" },
   { key: "categoryPerformance", label: "Rendimiento Categorías" },
   { key: "channelAnalysis", label: "Análisis por Canal" },
+  { key: "trafficStats", label: "Traffic Stats" },
 ]
