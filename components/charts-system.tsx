@@ -401,8 +401,8 @@ export const ChartsGrid = ({ period, visibleCharts }: ChartsGridProps) => {
     },
     {
       key: "salesCategory",
-      title: "Sales Category",
-      description: "Distribution of sales by category and channel",
+      title: "Categoría de Ventas",
+      description: "Distribución de ventas por categoría y canal",
       component: (
         <div className="flex items-center justify-between">
           {/* Chart container */}
@@ -430,7 +430,7 @@ export const ChartsGrid = ({ period, visibleCharts }: ChartsGridProps) => {
                         <div className="bg-card border border-border rounded-lg p-3 shadow-lg">
                           <p className="font-medium text-card-foreground">{data.name}</p>
                           <p className="text-sm text-muted-foreground">
-                            {data.percentage}% • {data.products} Products
+                            {data.percentage}% • {data.products} Productos
                           </p>
                         </div>
                       )
@@ -461,7 +461,7 @@ export const ChartsGrid = ({ period, visibleCharts }: ChartsGridProps) => {
                     {category.name}
                   </div>
                   <div className="text-lg font-bold text-foreground">
-                    {category.percentage}% • {category.products.toLocaleString()} Products
+                    {category.percentage}% • {category.products.toLocaleString()} Productos
                   </div>
                 </div>
               </div>
@@ -703,12 +703,14 @@ export const ChartsGrid = ({ period, visibleCharts }: ChartsGridProps) => {
   const filteredCharts = chartConfigs.filter((chart) => visibleCharts.includes(chart.key))
 
   return (
-    <div className="grid gap-4 md:grid-cols-3">
+    <div className="grid gap-4 md:grid-cols-6">
       {filteredCharts.map((chart) => {
-        // Estadísticas takes 2 columns, Ingresos Estimados takes 1 column
-        const colSpan = chart.key === "statistics" ? "md:col-span-2" :
-          chart.key === "estimatedRevenue" ? "md:col-span-1" :
-            "md:col-span-1"
+        // Define column spans: Estadísticas=4 cols, Ingresos Estimados=2 cols, Sales Category=3 cols (half), Próximas Citas=3 cols, others=2 cols
+        const colSpan = chart.key === "statistics" ? "md:col-span-4" :
+          chart.key === "estimatedRevenue" ? "md:col-span-2" :
+            chart.key === "salesCategory" ? "md:col-span-3" :
+              chart.key === "upcomingSchedule" ? "md:col-span-3" :
+                "md:col-span-2"
 
         return (
           <ChartCard
