@@ -194,9 +194,10 @@ const ChartCard = ({ title, description, children, className = "" }: ChartCardPr
 interface ChartsGridProps {
   period: string
   visibleCharts: string[]
+  hideFinancials?: boolean
 }
 
-export const ChartsGrid = ({ period, visibleCharts }: ChartsGridProps) => {
+export const ChartsGrid = ({ period, visibleCharts, hideFinancials = false }: ChartsGridProps) => {
   const chartData = generateChartsData(period)
 
   const chartConfigs = [
@@ -813,7 +814,14 @@ export const ChartsGrid = ({ period, visibleCharts }: ChartsGridProps) => {
     },
   ]
 
-  const filteredCharts = chartConfigs.filter((chart) => visibleCharts.includes(chart.key))
+  // Filter out financial charts if hideFinancials is true
+  const financialCharts = ["statistics", "estimatedRevenue", "salesTrend"]
+
+  const filteredCharts = chartConfigs.filter((chart) => {
+    const isVisible = visibleCharts.includes(chart.key)
+    const isFinancial = financialCharts.includes(chart.key)
+    return isVisible && (!hideFinancials || !isFinancial)
+  })
 
   return (
     <div className="grid gap-4 md:grid-cols-6">

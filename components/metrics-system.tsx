@@ -197,9 +197,10 @@ export const MetricCard = ({ title, data, icon: Icon, period, isLowerBetter = fa
 interface MetricsGridProps {
   period: string
   visibleMetrics: string[]
+  hideFinancials?: boolean
 }
 
-export const MetricsGrid = ({ period, visibleMetrics }: MetricsGridProps) => {
+export const MetricsGrid = ({ period, visibleMetrics, hideFinancials = false }: MetricsGridProps) => {
   const metricsData = generateMetricsData(period)
 
   const metricConfigs = [
@@ -254,7 +255,14 @@ export const MetricsGrid = ({ period, visibleMetrics }: MetricsGridProps) => {
     },
   ]
 
-  const filteredMetrics = metricConfigs.filter((metric) => visibleMetrics.includes(metric.key))
+  // Filter out financial metrics if hideFinancials is true
+  const financialMetrics = ["totalRevenue", "avgOrderValue", "customerLifetimeValue"]
+
+  const filteredMetrics = metricConfigs.filter((metric) => {
+    const isVisible = visibleMetrics.includes(metric.key)
+    const isFinancial = financialMetrics.includes(metric.key)
+    return isVisible && (!hideFinancials || !isFinancial)
+  })
 
   return (
     <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
@@ -276,9 +284,10 @@ export const MetricsGrid = ({ period, visibleMetrics }: MetricsGridProps) => {
 interface RecentOrdersTableProps {
   orders?: Order[]
   showFilter?: boolean
+  hideFinancials?: boolean
 }
 
-export const RecentOrdersTable = ({ orders = mockOrders.slice(0, 5), showFilter = true }: RecentOrdersTableProps) => {
+export const RecentOrdersTable = ({ orders = mockOrders.slice(0, 5), showFilter = true, hideFinancials = false }: RecentOrdersTableProps) => {
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase()
   }
@@ -340,7 +349,9 @@ export const RecentOrdersTable = ({ orders = mockOrders.slice(0, 5), showFilter 
                 </th>
                 <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Cliente</th>
                 <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Producto/Servicio</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Valor Pedido</th>
+                {!hideFinancials && (
+                  <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Valor Pedido</th>
+                )}
                 <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Fecha Cierre</th>
                 <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Estado</th>
                 <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Acción</th>
@@ -369,9 +380,11 @@ export const RecentOrdersTable = ({ orders = mockOrders.slice(0, 5), showFilter 
                   <td className="py-4 px-4">
                     <div className="text-sm">{order.products[0]}</div>
                   </td>
-                  <td className="py-4 px-4">
-                    <div className="font-medium text-sm">${order.amount.toLocaleString()}</div>
-                  </td>
+                  {!hideFinancials && (
+                    <td className="py-4 px-4">
+                      <div className="font-medium text-sm">${order.amount.toLocaleString()}</div>
+                    </td>
+                  )}
                   <td className="py-4 px-4">
                     <div className="text-sm">{order.date}</div>
                   </td>
