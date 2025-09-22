@@ -176,10 +176,10 @@ export const MetricCard = ({ title, data, icon: Icon, period, isLowerBetter = fa
   return (
     <Card className="p-4 hover:shadow-sm transition-shadow duration-200">
       <div className="space-y-2">
-        <div className="text-sm font-medium text-muted-foreground">{title}</div>
         <div className="text-2xl font-bold text-foreground">
           {formatMetricValue(data.current, data.format)}
         </div>
+        <div className="text-sm font-medium text-muted-foreground">{title}</div>
         <div className="flex items-center gap-2 text-sm">
           <Badge
             variant={badgeConfig.variant}

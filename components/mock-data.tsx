@@ -5,6 +5,7 @@ export interface Customer {
   phone: string
   company: string
   segment: "Enterprise" | "SMB" | "Startup"
+  status: "active" | "inactive" | "pending"
   acquisitionDate: string
   lifetimeValue: number
   lastOrderDate: string
@@ -61,6 +62,7 @@ export const mockCustomers: Customer[] = [
     phone: "+52 55 1234 5678",
     company: "TechCorp México",
     segment: "Enterprise",
+    status: "active",
     acquisitionDate: "2023-03-15",
     lifetimeValue: 45000,
     lastOrderDate: "2024-01-15",
@@ -72,6 +74,7 @@ export const mockCustomers: Customer[] = [
     phone: "+52 55 2345 6789",
     company: "InnovaSoft",
     segment: "SMB",
+    status: "active",
     acquisitionDate: "2023-06-20",
     lifetimeValue: 18500,
     lastOrderDate: "2024-01-15",
@@ -83,6 +86,7 @@ export const mockCustomers: Customer[] = [
     phone: "+52 81 3456 7890",
     company: "Startup NL",
     segment: "Startup",
+    status: "active",
     acquisitionDate: "2023-09-10",
     lifetimeValue: 8900,
     lastOrderDate: "2024-01-14",
@@ -94,6 +98,7 @@ export const mockCustomers: Customer[] = [
     phone: "+52 33 4567 8901",
     company: "Digital Jalisco",
     segment: "SMB",
+    status: "active",
     acquisitionDate: "2023-11-05",
     lifetimeValue: 12300,
     lastOrderDate: "2024-01-14",
@@ -105,6 +110,7 @@ export const mockCustomers: Customer[] = [
     phone: "+52 998 5678 9012",
     company: "Hotel QR",
     segment: "Enterprise",
+    status: "active",
     acquisitionDate: "2023-01-20",
     lifetimeValue: 67800,
     lastOrderDate: "2024-01-13",
@@ -116,6 +122,7 @@ export const mockCustomers: Customer[] = [
     phone: "+52 664 6789 0123",
     company: "Frontera Tech",
     segment: "SMB",
+    status: "active",
     acquisitionDate: "2023-04-12",
     lifetimeValue: 23400,
     lastOrderDate: "2024-01-13",
@@ -127,6 +134,7 @@ export const mockCustomers: Customer[] = [
     phone: "+52 222 7890 1234",
     company: "Puebla Digital",
     segment: "Startup",
+    status: "inactive",
     acquisitionDate: "2023-08-30",
     lifetimeValue: 5600,
     lastOrderDate: "2024-01-12",
@@ -138,6 +146,7 @@ export const mockCustomers: Customer[] = [
     phone: "+52 444 8901 2345",
     company: "Potosí Solutions",
     segment: "SMB",
+    status: "pending",
     acquisitionDate: "2023-07-18",
     lifetimeValue: 15700,
     lastOrderDate: "2024-01-12",

@@ -3,15 +3,9 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 
-import { useTheme } from "next-themes"
 import { DashboardNavbar } from "@/components/dashboard-navbar"
 import { MetricsCard, RecentOrdersCard, ChartsCard, OrdersManagementCard, MapCard } from "@/components/cards"
-import { FiltersSystem, defaultFilters, applyFilters, type FilterState } from "@/components/filters-system"
-import {
-  defaultLayouts,
-  getLayoutStyles,
-  type DashboardLayout,
-} from "@/components/customization-system"
+import { defaultFilters, applyFilters, type FilterState } from "@/components/filters-system"
 import { WidgetWrapper, filterDataByView, hideFinancialData } from "@/components/widget-wrapper"
 import { mockOrders } from "@/components/mock-data"
 import { viewConfigs, type UserView } from "@/types/views"
@@ -20,29 +14,68 @@ interface DashboardLayoutProps {
   initialView: UserView
 }
 
+// Simplified layout configurations for each view
+const getLayoutForView = (view: UserView) => {
+  switch (view) {
+    case "direccion-general":
+      return {
+        name: "Dirección General",
+        widgets: {
+          metrics: { visible: true, position: 1, size: "large" as const, rowsPerPage: 5 },
+          charts: { visible: true, position: 2, size: "medium" as const, rowsPerPage: 5 },
+          recentOrders: { visible: false, position: 3, size: "large" as const, rowsPerPage: 5 },
+          orders: { visible: false, position: 4, size: "large" as const, rowsPerPage: 10 },
+          map: { visible: false, position: 5, size: "medium" as const, rowsPerPage: 5 },
+        },
+        visibleMetrics: [
+          "totalRevenue", "totalOrders", "activeCustomers", "avgOrderValue",
+          "conversionRate", "customerLifetimeValue", "orderFulfillmentTime", "customerSatisfaction"
+        ],
+        visibleCharts: ["statistics", "estimatedRevenue", "salesCategory", "upcomingSchedule", "trafficStats"],
+      }
+    case "torre-control":
+      return {
+        name: "Torre de Control",
+        widgets: {
+          metrics: { visible: true, position: 1, size: "medium" as const, rowsPerPage: 8 },
+          charts: { visible: false, position: 2, size: "small" as const, rowsPerPage: 8 },
+          recentOrders: { visible: true, position: 3, size: "medium" as const, rowsPerPage: 8 },
+          orders: { visible: true, position: 4, size: "large" as const, rowsPerPage: 15 },
+          map: { visible: true, position: 5, size: "large" as const, rowsPerPage: 8 },
+        },
+        visibleMetrics: ["totalOrders", "activeCustomers", "avgOrderValue", "orderFulfillmentTime", "customerSatisfaction"],
+        visibleCharts: ["salesTrend", "salesCategory", "ordersComparison", "customerSegments"],
+      }
+    case "vista-cliente":
+      return {
+        name: "Vista Cliente",
+        widgets: {
+          metrics: { visible: false, position: 1, size: "small" as const, rowsPerPage: 10 },
+          charts: { visible: false, position: 2, size: "large" as const, rowsPerPage: 10 },
+          recentOrders: { visible: true, position: 3, size: "large" as const, rowsPerPage: 10 },
+          orders: { visible: false, position: 4, size: "small" as const, rowsPerPage: 8 },
+          map: { visible: true, position: 5, size: "medium" as const, rowsPerPage: 10 },
+        },
+        visibleMetrics: ["totalOrders", "avgOrderValue", "orderFulfillmentTime"],
+        visibleCharts: ["salesTrend", "salesCategory"],
+      }
+    default:
+      return getLayoutForView("direccion-general")
+  }
+}
+
 export default function DashboardLayout({ initialView }: DashboardLayoutProps) {
   const router = useRouter()
   const [filters, setFilters] = useState<FilterState>(defaultFilters)
   const [currentView, setCurrentView] = useState<UserView>(initialView)
-  const [dashboardLayout, setDashboardLayout] = useState<DashboardLayout>(defaultLayouts[0])
   const [mounted, setMounted] = useState(false)
-  const [isQuickControlOpen, setIsQuickControlOpen] = useState(false)
 
   // Simulated user email for client view filtering
   const [userEmail] = useState("cliente@ejemplo.com")
 
-  const { theme, setTheme } = useTheme()
-
   useEffect(() => {
     setMounted(true)
   }, [])
-
-  // Update layout when view changes
-  useEffect(() => {
-    const viewConfig = viewConfigs[currentView]
-    const newLayout = defaultLayouts.find(layout => layout.id === viewConfig.defaultLayout) || defaultLayouts[0]
-    setDashboardLayout(newLayout)
-  }, [currentView])
 
   // Handle view changes with navigation
   const handleViewChange = (newView: UserView) => {
@@ -68,46 +101,16 @@ export default function DashboardLayout({ initialView }: DashboardLayoutProps) {
     return null
   }
 
-  const toggleWidget = (widget: keyof DashboardLayout["widgets"]) => {
-    setDashboardLayout((prev) => ({
-      ...prev,
-      widgets: {
-        ...prev.widgets,
-        [widget]: {
-          ...prev.widgets[widget],
-          visible: !prev.widgets[widget].visible,
-        },
-      },
-    }))
-  }
 
-  const toggleMetric = (metricKey: string) => {
-    setDashboardLayout((prev) => ({
-      ...prev,
-      visibleMetrics: prev.visibleMetrics.includes(metricKey)
-        ? prev.visibleMetrics.filter((key) => key !== metricKey)
-        : [...prev.visibleMetrics, metricKey],
-    }))
-  }
-
-  const toggleChart = (chartKey: string) => {
-    setDashboardLayout((prev) => ({
-      ...prev,
-      visibleCharts: prev.visibleCharts.includes(chartKey)
-        ? prev.visibleCharts.filter((key) => key !== chartKey)
-        : [...prev.visibleCharts, chartKey],
-    }))
-  }
 
 
 
   const filteredOrders = applyFilters(mockOrders, filters)
   const viewFilteredOrders = filterDataByView(filteredOrders, currentView, userEmail)
   const shouldHideFinancials = hideFinancialData(currentView)
-  const layoutStyles = getLayoutStyles(dashboardLayout)
-  const currentViewConfig = viewConfigs[currentView]
+  const currentLayout = getLayoutForView(currentView)
 
-  const sortedWidgets = Object.entries(dashboardLayout.widgets)
+  const sortedWidgets = Object.entries(currentLayout.widgets)
     .filter(([_, widget]) => widget.visible)
     .sort(([_, a], [__, b]) => a.position - b.position)
 
@@ -131,7 +134,7 @@ export default function DashboardLayout({ initialView }: DashboardLayoutProps) {
           >
             <MetricsCard
               period={filters.period}
-              visibleMetrics={dashboardLayout.visibleMetrics}
+              visibleMetrics={currentLayout.visibleMetrics}
               hideFinancials={shouldHideFinancials}
             />
           </WidgetWrapper>
@@ -163,7 +166,7 @@ export default function DashboardLayout({ initialView }: DashboardLayoutProps) {
           >
             <ChartsCard
               period={filters.period}
-              visibleCharts={dashboardLayout.visibleCharts}
+              visibleCharts={currentLayout.visibleCharts}
               hideFinancials={shouldHideFinancials}
             />
           </WidgetWrapper>
@@ -205,22 +208,14 @@ export default function DashboardLayout({ initialView }: DashboardLayoutProps) {
   return (
     <div className="min-h-screen bg-background">
       <DashboardNavbar
-        dashboardLayout={dashboardLayout}
+        dashboardName={currentLayout.name}
         currentView={currentView}
         onViewChange={handleViewChange}
         filters={filters}
         onFiltersChange={setFilters}
-        onLayoutChange={setDashboardLayout}
-        onToggleWidget={toggleWidget}
-        onToggleMetric={toggleMetric}
-        onToggleChart={toggleChart}
-        isQuickControlOpen={isQuickControlOpen}
-        onQuickControlOpenChange={setIsQuickControlOpen}
-        viewFilteredOrdersLength={viewFilteredOrders.length}
-        totalOrdersLength={mockOrders.length}
       />
 
-      <main className={`p-8 ${layoutStyles.spacing}`} style={{ filter: layoutStyles.colorFilter }}>
+      <main className="p-8 space-y-6">
         {/* Dynamic Widget Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {sortedWidgets.map(([widgetKey, widget]) => renderWidget(widgetKey, widget))}
