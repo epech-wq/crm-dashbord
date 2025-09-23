@@ -25,6 +25,7 @@ export interface MetricsData {
   customerLifetimeValue: MetricData
   orderFulfillmentTime: MetricData
   customerSatisfaction: MetricData
+  missingSales: MetricData
 }
 
 export const generateMetricsData = (period: string): MetricsData => {
@@ -78,6 +79,12 @@ export const generateMetricsData = (period: string): MetricsData => {
       previous: historicalData.previous.customerSatisfaction,
       target: Math.min(5.0, Math.round(historicalData.current.customerSatisfaction * 1.05 * 10) / 10), // Meta 5% superior, máximo 5.0
       format: "number",
+    },
+    missingSales: {
+      current: Math.round(historicalData.current.totalRevenue * 0.15), // 15% de ingresos perdidos estimados
+      previous: Math.round(historicalData.previous.totalRevenue * 0.18), // 18% anterior (mejora)
+      target: Math.round(historicalData.current.totalRevenue * 0.10), // Meta: reducir a 10%
+      format: "currency",
     },
   }
 }
@@ -174,20 +181,22 @@ export const MetricCard = ({ title, data, icon: Icon, period, isLowerBetter = fa
   const badgeConfig = getBadgeVariant(change, isLowerBetter)
 
   return (
-    <Card className="p-4 hover:shadow-sm transition-shadow duration-200">
-      <div className="space-y-2">
-        <div className="text-2xl font-bold text-foreground">
+    <Card className="p-6">
+      <div className="grid gap-4">
+        <p className="text-3xl font-bold text-foreground">
           {formatMetricValue(data.current, data.format)}
-        </div>
-        <div className="text-sm font-medium text-muted-foreground">{title}</div>
-        <div className="flex items-center gap-2 text-sm">
-          <Badge
-            variant={badgeConfig.variant}
-            className={`text-xs font-medium ${badgeConfig.className}`}
-          >
-            {change > 0 ? "+" : ""}{change.toFixed(1)}%
-          </Badge>
-          <span className="text-muted-foreground">{getPeriodText(period)}</span>
+        </p>
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-xs font-medium">{title}</p>
+          <div className="flex items-center gap-2">
+            <Badge
+              variant={badgeConfig.variant}
+              className={`text-xs font-medium ${badgeConfig.className}`}
+            >
+              {change > 0 ? "+" : ""}{change.toFixed(1)}%
+            </Badge>
+            <p className="text-xs">{getPeriodText(period)}</p>
+          </div>
         </div>
       </div>
     </Card>
@@ -253,10 +262,17 @@ export const MetricsGrid = ({ period, visibleMetrics, hideFinancials = false }: 
       data: metricsData.customerSatisfaction,
       icon: Target,
     },
+    {
+      key: "missingSales",
+      title: "Ventas Perdidas",
+      data: metricsData.missingSales,
+      icon: TrendingDown,
+      isLowerBetter: true,
+    },
   ]
 
   // Filter out financial metrics if hideFinancials is true
-  const financialMetrics = ["totalRevenue", "avgOrderValue", "customerLifetimeValue"]
+  const financialMetrics = ["totalRevenue", "avgOrderValue", "customerLifetimeValue", "missingSales"]
 
   const filteredMetrics = metricConfigs.filter((metric) => {
     const isVisible = visibleMetrics.includes(metric.key)
@@ -265,7 +281,7 @@ export const MetricsGrid = ({ period, visibleMetrics, hideFinancials = false }: 
   })
 
   return (
-    <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+    <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {filteredMetrics.map((metric) => (
         <MetricCard
           key={metric.key}

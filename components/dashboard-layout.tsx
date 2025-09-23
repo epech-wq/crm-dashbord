@@ -28,8 +28,7 @@ const getLayoutForView = (view: UserView) => {
           map: { visible: false, position: 5, size: "medium" as const, rowsPerPage: 5 },
         },
         visibleMetrics: [
-          "totalRevenue", "totalOrders", "activeCustomers", "avgOrderValue",
-          "conversionRate", "customerLifetimeValue", "orderFulfillmentTime", "customerSatisfaction"
+          "totalRevenue", "totalOrders", "avgOrderValue", "conversionRate", "missingSales"
         ],
         visibleCharts: ["statistics", "estimatedRevenue", "salesCategory", "upcomingSchedule", "trafficStats"],
       }
