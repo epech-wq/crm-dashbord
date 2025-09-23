@@ -52,15 +52,24 @@ export const DashboardNavbar = ({
             onViewChange={onViewChange}
           />
 
-          {/* Period Filter - Icon with period label */}
-          <div className="flex items-center gap-2">
-            <div className="relative">
+          {/* Filters Section - Grouped with visual separator */}
+          <div className="flex items-center space-x-2 px-3 py-1 rounded-lg bg-gradient-to-r from-slate-50/50 to-gray-50/50 dark:from-slate-900/50 dark:to-gray-900/50 border border-slate-200/50 dark:border-slate-700/50">
+            {/* Period Filter - Enhanced design */}
+            <div className="relative group">
               <Select
                 value={filters.period}
                 onValueChange={(value) => onFiltersChange({ ...filters, period: value })}
               >
-                <SelectTrigger className="w-10 h-10 p-0">
-                  <Calendar className="h-4 w-4" />
+                <SelectTrigger className="h-10 px-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/50 dark:to-indigo-950/50 border-blue-200 dark:border-blue-800 hover:from-blue-100 hover:to-indigo-100 dark:hover:from-blue-900/50 dark:hover:to-indigo-900/50 transition-all duration-200 shadow-sm hover:shadow-md">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                    <span className="font-medium text-blue-900 dark:text-blue-100">
+                      {filters.period === "day" ? "Hoy" :
+                        filters.period === "week" ? "Esta semana" :
+                          filters.period === "month" ? "Este mes" :
+                            filters.period === "year" ? "Este año" : "Personalizado"}
+                    </span>
+                  </div>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="day">Día</SelectItem>
@@ -69,17 +78,24 @@ export const DashboardNavbar = ({
                   <SelectItem value="year">Año</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
-            <Badge variant="outline" className="text-sm font-medium">
-              {filters.period === "day" ? "Hoy" :
-                filters.period === "week" ? "Esta semana" :
-                  filters.period === "month" ? "Este mes" :
-                    filters.period === "year" ? "Este año" : "Personalizado"}
-            </Badge>
-          </div>
 
-          {/* Advanced Filters - Icon only */}
-          <FiltersSystem filters={filters} onFiltersChange={onFiltersChange} />
+              {/* Tooltip indicator */}
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full animate-pulse opacity-75 group-hover:opacity-100 transition-opacity" />
+
+              {/* Global effect indicator */}
+              <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50">
+                <div className="bg-blue-600 text-white text-xs px-2 py-1 rounded-md whitespace-nowrap shadow-lg">
+                  Afecta toda la página
+                </div>
+              </div>
+            </div>
+
+            {/* Separator */}
+            <div className="w-px h-6 bg-slate-300 dark:bg-slate-600" />
+
+            {/* Advanced Filters */}
+            <FiltersSystem filters={filters} onFiltersChange={onFiltersChange} />
+          </div>
 
           {/* Theme Toggle - Icon only */}
           <div className="relative">

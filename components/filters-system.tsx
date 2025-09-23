@@ -171,21 +171,47 @@ export const FiltersSystem = ({ filters, onFiltersChange, className = "" }: Filt
     <div className={`${className} relative`}>
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
-          <Button
-            variant="outline"
-            className={`bg-transparent w-10 h-10 p-0 ${activeFiltersCount > 0 ? 'border-primary bg-primary/10' : ''}`}
-          >
-            <Filter className={`h-4 w-4 ${activeFiltersCount > 0 ? 'text-primary' : ''}`} />
-          </Button>
+          <div className="relative group">
+            <Button
+              variant="outline"
+              className={`h-10 px-4 transition-all duration-200 shadow-sm hover:shadow-md ${activeFiltersCount > 0
+                ? 'bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/50 dark:to-teal-950/50 border-emerald-200 dark:border-emerald-800 hover:from-emerald-100 hover:to-teal-100 dark:hover:from-emerald-900/50 dark:hover:to-teal-900/50'
+                : 'bg-gradient-to-r from-gray-50 to-slate-50 dark:from-gray-950/50 dark:to-slate-950/50 border-gray-200 dark:border-gray-800 hover:from-gray-100 hover:to-slate-100 dark:hover:from-gray-900/50 dark:hover:to-slate-900/50'
+                }`}
+            >
+              <div className="flex items-center gap-2">
+                <Filter className={`h-4 w-4 ${activeFiltersCount > 0
+                  ? 'text-emerald-600 dark:text-emerald-400'
+                  : 'text-gray-600 dark:text-gray-400'
+                  }`} />
+                <span className={`font-medium text-sm ${activeFiltersCount > 0
+                  ? 'text-emerald-900 dark:text-emerald-100'
+                  : 'text-gray-900 dark:text-gray-100'
+                  }`}>
+                  Filtros
+                  {activeFiltersCount > 0 && (
+                    <span className="ml-1 text-xs">({activeFiltersCount})</span>
+                  )}
+                </span>
+              </div>
+            </Button>
+
+            {/* Active filters indicator */}
+            {activeFiltersCount > 0 && (
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full animate-pulse" />
+            )}
+
+            {/* Global effect indicator */}
+            <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50">
+              <div className="bg-emerald-600 text-white text-xs px-2 py-1 rounded-md whitespace-nowrap shadow-lg">
+                {activeFiltersCount > 0
+                  ? `${activeFiltersCount} filtro${activeFiltersCount !== 1 ? 's' : ''} activo${activeFiltersCount !== 1 ? 's' : ''} - Afecta toda la página`
+                  : 'Configurar filtros globales'
+                }
+              </div>
+            </div>
+          </div>
         </SheetTrigger>
-        {activeFiltersCount > 0 && (
-          <Badge
-            variant="destructive"
-            className="absolute -top-1 -right-1 h-4 w-4 rounded-full p-0 text-xs flex items-center justify-center font-semibold z-10 pointer-events-none"
-          >
-            {activeFiltersCount > 9 ? "9+" : activeFiltersCount}
-          </Badge>
-        )}
         <SheetContent side="right" className="w-[400px] sm:w-[450px]">
           <SheetHeader>
             <SheetTitle className="flex items-center gap-2">

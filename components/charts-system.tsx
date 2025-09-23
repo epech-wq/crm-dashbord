@@ -134,8 +134,8 @@ export const ChartsGrid = ({ period, visibleCharts, hideFinancials = false }: Ch
   const chartConfigs = [
     {
       key: "statistics",
-      title: "Estadísticas",
-      description: "Objetivos que has establecido para cada mes",
+      title: "Estadísticas de Ventas",
+      description: "Análisis YTY, YTD y metas de ventas con proyecciones",
       component: <StatisticsChart data={chartData} hideFinancials={hideFinancials} />,
     },
     {
@@ -231,7 +231,7 @@ export const ChartsGrid = ({ period, visibleCharts, hideFinancials = false }: Ch
 }
 
 export const availableCharts = [
-  { key: "statistics", label: "Estadísticas" },
+  { key: "statistics", label: "Estadísticas de Ventas" },
   { key: "estimatedRevenue", label: "Ingresos Estimados" },
   { key: "salesCategory", label: "Categoría de Ventas" },
   { key: "upcomingSchedule", label: "Próximas Citas" },
