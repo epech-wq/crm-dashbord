@@ -30,7 +30,7 @@ const getLayoutForView = (view: UserView) => {
         visibleMetrics: [
           "totalRevenue", "totalOrders", "avgOrderValue", "conversionRate", "missingSales"
         ],
-        visibleCharts: ["statistics", "estimatedRevenue", "salesCategory", "upcomingSchedule", "trafficStats"],
+        visibleCharts: ["statistics", "estimatedRevenue", "salesCategory", "trafficStats"],
       }
     case "torre-control":
       return {
