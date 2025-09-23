@@ -141,7 +141,6 @@ export const ChartsGrid = ({ period, visibleCharts, hideFinancials = false }: Ch
     {
       key: "estimatedRevenue",
       title: "Ingresos Estimados",
-      description: "Objetivos que has establecido para cada mes",
       component: <EstimatedRevenueChart data={chartData} hideFinancials={hideFinancials} />,
     },
     {

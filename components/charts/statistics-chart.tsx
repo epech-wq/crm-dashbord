@@ -5,9 +5,10 @@ import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Line, ComposedChart
 interface StatisticsChartProps {
   data: any
   hideFinancials?: boolean
+  period?: string
 }
 
-export const StatisticsChart = ({ data, hideFinancials = false }: StatisticsChartProps) => {
+export const StatisticsChart = ({ data, hideFinancials = false, period = "month" }: StatisticsChartProps) => {
   if (hideFinancials) {
     return (
       <div className="flex items-center justify-center h-48 text-muted-foreground">
@@ -39,30 +40,59 @@ export const StatisticsChart = ({ data, hideFinancials = false }: StatisticsChar
     }).format(amount)
   }
 
-  // Generate YTY monthly data (always 12 months regardless of selected period)
-  const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
-  const currentMonth = new Date().getMonth() // 0-based index
+
+
+  // Generate YTY monthly data (Jan-Sep only for current year)
+  const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep"]
+  const currentMonth = new Date().getMonth() // 0-based index (but limited to Sep)
+  const maxDisplayMonth = Math.min(currentMonth, 8) // Limit to September (index 8)
+
+  // Calculate average growth rate from completed months for predictions
+  const completedMonthsData: number[] = []
+  const baseSales = currentYearSales / 12
 
   const ytyChartData = monthNames.map((month, index) => {
-    // Base sales amount with seasonal variation
-    const baseSales = currentYearSales / 12
-    const seasonalMultiplier = 0.8 + Math.sin((index / 12) * 2 * Math.PI) * 0.3 + Math.random() * 0.2
-    const currentSales = baseSales * seasonalMultiplier
+    const isCurrentOrPastMonth = index <= maxDisplayMonth
+    const isFutureMonth = index > maxDisplayMonth
 
-    // Previous year sales (slightly lower with different seasonal pattern)
-    const previousSeasonalMultiplier = 0.75 + Math.sin(((index + 1) / 12) * 2 * Math.PI) * 0.25 + Math.random() * 0.15
+    // Previous year sales (consistent pattern for all 9 months)
+    const previousSeasonalMultiplier = 0.75 + Math.sin(((index + 1) / 12) * 2 * Math.PI) * 0.25 + (Math.random() - 0.5) * 0.1
     const previousSales = (previousYearSales / 12) * previousSeasonalMultiplier
 
-    // Projection (optimistic growth)
-    const projectionSales = currentSales * (1.1 + Math.random() * 0.2)
+    let currentSales: number
+    let projectionSales: number
+
+    if (isCurrentOrPastMonth) {
+      // Actual/current data with seasonal variation
+      const seasonalMultiplier = 0.8 + Math.sin((index / 12) * 2 * Math.PI) * 0.3 + (Math.random() - 0.5) * 0.15
+      currentSales = baseSales * seasonalMultiplier
+      completedMonthsData.push(currentSales)
+
+      // Projection for completed months (slight optimistic adjustment)
+      projectionSales = currentSales * (1.05 + Math.random() * 0.1)
+    } else {
+      // Future months (within Jan-Sep range) - use prediction based on trend
+      const avgCompletedSales = completedMonthsData.length > 0
+        ? completedMonthsData.reduce((sum, val) => sum + val, 0) / completedMonthsData.length
+        : baseSales
+
+      // Apply growth trend and seasonal patterns for future months
+      const growthTrend = 1.08 + (Math.random() - 0.5) * 0.1 // 8% growth with variation
+      const futureSeasonalMultiplier = 0.85 + Math.sin((index / 12) * 2 * Math.PI) * 0.25
+
+      // Future predictions based on current performance trend
+      currentSales = 0 // No actual data for future months
+      projectionSales = avgCompletedSales * growthTrend * futureSeasonalMultiplier
+    }
 
     return {
       period: month,
-      ventasActuales: Math.round(currentSales),
+      ventasActuales: isCurrentOrPastMonth ? Math.round(currentSales) : null, // null for future months
       añoAnterior: Math.round(previousSales),
       proyeccion: Math.round(projectionSales),
-      // Add opacity for future months (after current month)
-      isFuture: index > currentMonth
+      prediccionFutura: isFutureMonth ? Math.round(projectionSales) : null, // Separate field for future predictions
+      isFuture: isFutureMonth,
+      isCurrentMonth: index === maxDisplayMonth
     }
   })
 
@@ -99,22 +129,26 @@ export const StatisticsChart = ({ data, hideFinancials = false }: StatisticsChar
       </div>
 
       {/* Legend */}
-      <div className="flex justify-center gap-6 mb-4 text-xs">
-        <div className="flex items-center gap-2">
+      <div className="flex justify-center gap-4 mb-4 text-xs">
+        <div className="flex items-center gap-1">
           <div className="w-3 h-3 rounded-full bg-blue-600"></div>
           <span className="text-muted-foreground">Ventas Actuales</span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           <div className="w-3 h-3 rounded-full bg-green-600"></div>
           <span className="text-muted-foreground">Año Anterior</span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           <div className="w-3 h-3 rounded-full bg-orange-600"></div>
           <span className="text-muted-foreground">Proyección</span>
         </div>
+        <div className="flex items-center gap-1">
+          <div className="w-3 h-3 rounded-full bg-purple-600"></div>
+          <span className="text-muted-foreground">Predicción Futura</span>
+        </div>
       </div>
 
-      {/* YTY Sales Chart - Always shows 12 months */}
+      {/* YTY Sales Chart with Future Predictions */}
       <ResponsiveContainer width="100%" height={200}>
         <ComposedChart data={ytyChartData}>
           <defs>
@@ -125,6 +159,10 @@ export const StatisticsChart = ({ data, hideFinancials = false }: StatisticsChar
             <linearGradient id="statsGradientPrevious" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#10b981" stopOpacity={0.2} />
               <stop offset="95%" stopColor="#10b981" stopOpacity={0.05} />
+            </linearGradient>
+            <linearGradient id="statsGradientFuture" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#9333ea" stopOpacity={0.2} />
+              <stop offset="95%" stopColor="#9333ea" stopOpacity={0.05} />
             </linearGradient>
           </defs>
           <XAxis dataKey="period" axisLine={false} tickLine={false} className="text-xs fill-muted-foreground" />
@@ -139,23 +177,36 @@ export const StatisticsChart = ({ data, hideFinancials = false }: StatisticsChar
             fill="url(#statsGradientPrevious)"
           />
 
-          {/* Current year sales area */}
+          {/* Current year sales area (actual data only) */}
           <Area
             type="monotone"
             dataKey="ventasActuales"
             stroke="#3b82f6"
             strokeWidth={2}
             fill="url(#statsGradientCurrent)"
+            connectNulls={false}
           />
 
-          {/* Projection line */}
+          {/* Future predictions area */}
+          <Area
+            type="monotone"
+            dataKey="prediccionFutura"
+            stroke="#9333ea"
+            strokeWidth={2}
+            strokeDasharray="4 4"
+            fill="url(#statsGradientFuture)"
+            connectNulls={false}
+          />
+
+          {/* Overall projection line */}
           <Line
             type="monotone"
             dataKey="proyeccion"
             stroke="#ea580c"
-            strokeWidth={2}
-            strokeDasharray="3 3"
+            strokeWidth={1.5}
+            strokeDasharray="2 2"
             dot={false}
+            strokeOpacity={0.7}
           />
         </ComposedChart>
       </ResponsiveContainer>
