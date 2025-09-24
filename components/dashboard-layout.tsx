@@ -58,6 +58,19 @@ const getLayoutForView = (view: UserView) => {
         visibleMetrics: ["totalOrders", "avgOrderValue", "orderFulfillmentTime"],
         visibleCharts: ["salesTrend", "salesCategory"],
       }
+    case "stock-productos":
+      return {
+        name: "Stock de Productos",
+        widgets: {
+          metrics: { visible: false, position: 1, size: "large" as const, rowsPerPage: 5 },
+          charts: { visible: true, position: 2, size: "large" as const, rowsPerPage: 5 },
+          recentOrders: { visible: false, position: 3, size: "large" as const, rowsPerPage: 5 },
+          orders: { visible: false, position: 4, size: "large" as const, rowsPerPage: 10 },
+          map: { visible: false, position: 5, size: "medium" as const, rowsPerPage: 5 },
+        },
+        visibleMetrics: [],
+        visibleCharts: ["statistics", "inventoryPercentage"],
+      }
     default:
       return getLayoutForView("direccion-general")
   }
@@ -90,6 +103,9 @@ export default function DashboardLayout({ initialView }: DashboardLayoutProps) {
         break
       case "vista-cliente":
         router.push("/vista-cliente")
+        break
+      case "stock-productos":
+        router.push("/stock-productos")
         break
       default:
         router.push("/")

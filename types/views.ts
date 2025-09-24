@@ -1,4 +1,4 @@
-export type UserView = "direccion-general" | "torre-control" | "vista-cliente"
+export type UserView = "direccion-general" | "torre-control" | "vista-cliente" | "stock-productos"
 
 export interface ViewConfig {
   id: UserView
@@ -54,6 +54,20 @@ export const viewConfigs: Record<UserView, ViewConfig> = {
       canViewFinancials: false,
       canViewAllOrders: false,
       canViewAnalytics: false,
+      canEditOrders: false,
+      canViewCustomerData: false,
+    },
+  },
+  "stock-productos": {
+    id: "stock-productos",
+    name: "Stock de Productos",
+    description: "Vista especializada para gestión y análisis de inventario",
+    allowedWidgets: ["metrics", "charts", "map"],
+    defaultLayout: "inventory",
+    permissions: {
+      canViewFinancials: true,
+      canViewAllOrders: false,
+      canViewAnalytics: true,
       canEditOrders: false,
       canViewCustomerData: false,
     },

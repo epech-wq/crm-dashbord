@@ -15,6 +15,7 @@ import {
   CategoryPerformanceChart,
   ChannelAnalysisChart,
   TrafficStatsChart,
+  InventoryPercentageChart,
 } from "@/components/charts"
 
 export const generateChartsData = (period: string) => {
@@ -191,6 +192,12 @@ export const ChartsGrid = ({ period, visibleCharts, hideFinancials = false }: Ch
       description: "Estadísticas de tráfico y rendimiento del sitio web",
       component: <TrafficStatsChart data={chartData} />,
     },
+    {
+      key: "inventoryPercentage",
+      title: "Porcentaje de Inventario",
+      description: `Evolución del nivel de inventario por ${period === "day" ? "hora" : period === "week" ? "día" : period === "month" ? "día" : "mes"}`,
+      component: <InventoryPercentageChart period={period} />,
+    },
   ]
 
   // Filter out financial charts if hideFinancials is true
@@ -240,4 +247,5 @@ export const availableCharts = [
   { key: "categoryPerformance", label: "Rendimiento Categorías" },
   { key: "channelAnalysis", label: "Análisis por Canal" },
   { key: "trafficStats", label: "Traffic Stats" },
+  { key: "inventoryPercentage", label: "Porcentaje de Inventario" },
 ]

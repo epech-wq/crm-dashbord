@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Eye, Users, Building, Shield } from "lucide-react"
+import { Eye, Users, Building, Shield, Package } from "lucide-react"
 import { viewConfigs, type UserView } from "@/types/views"
 
 interface ViewSelectorProps {
@@ -34,6 +34,9 @@ export const ViewSelector = ({ currentView, onViewChange, className = "" }: View
         case "vista-cliente":
           router.push("/vista-cliente")
           break
+        case "stock-productos":
+          router.push("/stock-productos")
+          break
         default:
           router.push("/")
       }
@@ -48,6 +51,8 @@ export const ViewSelector = ({ currentView, onViewChange, className = "" }: View
         return <Shield className="h-4 w-4" />
       case "vista-cliente":
         return <Users className="h-4 w-4" />
+      case "stock-productos":
+        return <Package className="h-4 w-4" />
       default:
         return <Eye className="h-4 w-4" />
     }
@@ -61,6 +66,8 @@ export const ViewSelector = ({ currentView, onViewChange, className = "" }: View
         return "bg-green-500 hover:bg-green-600"
       case "vista-cliente":
         return "bg-gray-500 hover:bg-gray-600"
+      case "stock-productos":
+        return "bg-orange-500 hover:bg-orange-600"
       default:
         return "bg-primary hover:bg-primary/90"
     }
