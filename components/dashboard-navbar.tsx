@@ -7,6 +7,7 @@ import { Calendar, Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
 import { FiltersSystem, type FilterState } from "@/components/filters-system"
 import { ViewSelector } from "@/components/view-selector"
+import { DataManagementButton } from "@/components/data-management-button"
 import { viewConfigs, type UserView } from "@/types/views"
 
 interface DashboardNavbarProps {
@@ -46,6 +47,9 @@ export const DashboardNavbar = ({
         </div>
 
         <div className="flex items-center space-x-3">
+          {/* Data Management Button - Only visible in Dirección General */}
+          <DataManagementButton currentView={currentView} />
+
           {/* View Selector */}
           <ViewSelector
             currentView={currentView}
