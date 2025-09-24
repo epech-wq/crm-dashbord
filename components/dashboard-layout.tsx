@@ -7,8 +7,9 @@ import { DashboardNavbar } from "@/components/dashboard-navbar"
 import { MetricsCard, RecentOrdersCard, ChartsCard, OrdersManagementCard, MapCard } from "@/components/cards"
 import { defaultFilters, applyFilters, type FilterState } from "@/components/filters-system"
 import { WidgetWrapper, filterDataByView, hideFinancialData } from "@/components/widget-wrapper"
+import { OutOfStockTable } from "@/components/out-of-stock-table"
 import { mockOrders } from "@/components/mock-data"
-import { viewConfigs, type UserView } from "@/types/views"
+import { type UserView } from "@/types/views"
 
 interface DashboardLayoutProps {
   initialView: UserView
@@ -67,6 +68,7 @@ const getLayoutForView = (view: UserView) => {
           recentOrders: { visible: false, position: 3, size: "large" as const, rowsPerPage: 5 },
           orders: { visible: false, position: 4, size: "large" as const, rowsPerPage: 10 },
           map: { visible: false, position: 5, size: "medium" as const, rowsPerPage: 5 },
+          outOfStockTable: { visible: true, position: 6, size: "large" as const, rowsPerPage: 10 },
         },
         visibleMetrics: [],
         visibleCharts: ["statistics", "inventoryPercentage"],
@@ -214,6 +216,12 @@ export default function DashboardLayout({ initialView }: DashboardLayoutProps) {
           >
             <MapCard orders={viewFilteredOrders} />
           </WidgetWrapper>
+        )
+      case "outOfStockTable":
+        return (
+          <div key={widgetKey} className="col-span-full">
+            <OutOfStockTable />
+          </div>
         )
       default:
         return null
