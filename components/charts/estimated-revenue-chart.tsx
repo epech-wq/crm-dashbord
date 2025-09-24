@@ -66,8 +66,11 @@ export const EstimatedRevenueChart = ({ data, hideFinancials = false }: Estimate
 
         {/* Center text */}
         <div className="absolute inset-0 flex flex-col items-center justify-center pt-12">
-          <div className="text-3xl font-bold text-foreground">
-            ${currentRevenue.toLocaleString()}
+          <div className="text-2xl font-bold text-foreground">
+            ${(currentRevenue / 1000).toFixed(1)}K
+          </div>
+          <div className="text-xs text-muted-foreground">
+            {revenueProgress.toFixed(1)}%
           </div>
         </div>
       </div>
@@ -78,17 +81,20 @@ export const EstimatedRevenueChart = ({ data, hideFinancials = false }: Estimate
         <div className="space-y-2">
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium text-foreground">Marketing</span>
-            <span className="text-sm text-muted-foreground">
-              {marketingProgress.toFixed(1)}%
+            <span className={`text-sm font-medium ${marketingDifference >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              {marketingDifference >= 0 ? '+' : ''}${marketingDifference.toLocaleString()} ({marketingDifferencePercent}%)
             </span>
           </div>
-          <Progress value={marketingProgress} className="h-2" />
+          <Progress
+            value={marketingProgress}
+            className="h-2 [&>div]:bg-[#3b82f6]"
+          />
           <div className="flex justify-between items-center text-xs">
             <span className="text-muted-foreground">
               ${marketingCurrent.toLocaleString()} / ${marketingGoal.toLocaleString()}
             </span>
-            <span className={`font-medium ${marketingDifference >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {marketingDifference >= 0 ? '+' : ''}${marketingDifference.toLocaleString()} ({marketingDifferencePercent}%)
+            <span className="text-muted-foreground">
+              {marketingProgress.toFixed(1)}%
             </span>
           </div>
         </div>
@@ -97,17 +103,20 @@ export const EstimatedRevenueChart = ({ data, hideFinancials = false }: Estimate
         <div className="space-y-2">
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium text-foreground">Ventas</span>
-            <span className="text-sm text-muted-foreground">
-              {ventasProgress.toFixed(1)}%
+            <span className={`text-sm font-medium ${ventasDifference >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              {ventasDifference >= 0 ? '+' : ''}${ventasDifference.toLocaleString()} ({ventasDifferencePercent}%)
             </span>
           </div>
-          <Progress value={ventasProgress} className="h-2" />
+          <Progress
+            value={ventasProgress}
+            className="h-2 [&>div]:bg-[#3b82f6]"
+          />
           <div className="flex justify-between items-center text-xs">
             <span className="text-muted-foreground">
               ${ventasCurrent.toLocaleString()} / ${ventasGoal.toLocaleString()}
             </span>
-            <span className={`font-medium ${ventasDifference >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {ventasDifference >= 0 ? '+' : ''}${ventasDifference.toLocaleString()} ({ventasDifferencePercent}%)
+            <span className="text-muted-foreground">
+              {ventasProgress.toFixed(1)}%
             </span>
           </div>
         </div>

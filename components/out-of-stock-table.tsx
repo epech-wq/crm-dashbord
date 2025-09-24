@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   Table,
   TableBody,
@@ -135,12 +136,46 @@ export const OutOfStockTable = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [sortBy, setSortBy] = useState<"outOfStock" | "customers" | "price">("outOfStock")
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
+  const [activeTab, setActiveTab] = useState("all")
 
   // Combine original and additional products
   const allProducts = [...generateExtendedProducts(), ...generateAdditionalProducts()]
 
+  // Filter products by tab and search term
+  const getFilteredProductsByTab = (products: ExtendedProduct[]) => {
+    let tabFiltered = products
+
+    switch (activeTab) {
+      case "growth":
+        // Growth Drivers: Products with good sales trends, high customer count, or active promotions
+        tabFiltered = products.filter(product =>
+          product.salesTrend === "up" ||
+          product.customersCount >= 8 ||
+          product.activePromotion ||
+          product.isNewProduct
+        )
+        break
+      case "alerts":
+        // Alerts: Products with critical or low stock, or declining sales
+        tabFiltered = products.filter(product =>
+          product.stockStatus === "critical" ||
+          product.stockStatus === "low" ||
+          product.salesTrend === "down" ||
+          product.outOfStockPercentage >= 60
+        )
+        break
+      case "all":
+      default:
+        // All products
+        tabFiltered = products
+        break
+    }
+
+    return tabFiltered
+  }
+
   // Filter and sort products
-  const filteredProducts = allProducts
+  const filteredProducts = getFilteredProductsByTab(allProducts)
     .filter(product =>
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -232,6 +267,32 @@ export const OutOfStockTable = () => {
         </div>
       </CardHeader>
       <CardContent>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="all">Todos los Productos</TabsTrigger>
+            <TabsTrigger value="growth">Growth Drivers</TabsTrigger>
+            <TabsTrigger value="alerts">Alertas</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="all" className="mt-6">
+            {renderTableContent()}
+          </TabsContent>
+
+          <TabsContent value="growth" className="mt-6">
+            {renderTableContent()}
+          </TabsContent>
+
+          <TabsContent value="alerts" className="mt-6">
+            {renderTableContent()}
+          </TabsContent>
+        </Tabs>
+      </CardContent>
+    </Card>
+  )
+
+  function renderTableContent() {
+    return (
+      <>
         <div className="rounded-md border">
           <Table>
             <TableHeader>
@@ -365,7 +426,7 @@ export const OutOfStockTable = () => {
             <p className="text-sm text-muted-foreground">Productos Nuevos</p>
           </div>
         </div>
-      </CardContent>
-    </Card>
-  )
+      </>
+    )
+  }
 }
