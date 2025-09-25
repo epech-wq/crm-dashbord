@@ -15,6 +15,15 @@ import {
   TableRow
 } from "@/components/ui/table"
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  DropdownMenuCheckboxItem,
+} from "@/components/ui/dropdown-menu"
+import {
   TrendingUp,
   TrendingDown,
   Minus,
@@ -24,7 +33,10 @@ import {
   Users,
   Tag,
   Star,
-  Sparkles
+  Sparkles,
+  Filter,
+  ChevronDown,
+  X
 } from "lucide-react"
 import { mockProducts, mockOrders } from "@/components/mock-data"
 
@@ -138,8 +150,20 @@ export const OutOfStockTable = () => {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
   const [activeTab, setActiveTab] = useState("all")
 
+  // Filter states
+  const [selectedPromotions, setSelectedPromotions] = useState<string[]>([])
+  const [selectedBrands, setSelectedBrands] = useState<string[]>([])
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  const [selectedStates, setSelectedStates] = useState<string[]>([])
+
   // Combine original and additional products
   const allProducts = [...generateExtendedProducts(), ...generateAdditionalProducts()]
+
+  // Get unique values for filters
+  const uniqueBrands = Array.from(new Set(allProducts.map(p => p.brand))).sort()
+  const uniqueCategories = Array.from(new Set(allProducts.map(p => p.category))).sort()
+  const uniqueStates = ["critical", "low", "medium", "good"]
+  const promotionOptions = ["Con Promoción", "Sin Promoción"]
 
   // Filter products by tab and search term
   const getFilteredProductsByTab = (products: ExtendedProduct[]) => {
@@ -174,8 +198,40 @@ export const OutOfStockTable = () => {
     return tabFiltered
   }
 
+  // Apply additional filters
+  const applyFilters = (products: ExtendedProduct[]) => {
+    return products.filter(product => {
+      // Promotion filter
+      if (selectedPromotions.length > 0) {
+        const hasPromotion = product.activePromotion
+        const promotionMatch = selectedPromotions.some(filter =>
+          (filter === "Con Promoción" && hasPromotion) ||
+          (filter === "Sin Promoción" && !hasPromotion)
+        )
+        if (!promotionMatch) return false
+      }
+
+      // Brand filter
+      if (selectedBrands.length > 0 && !selectedBrands.includes(product.brand)) {
+        return false
+      }
+
+      // Category filter
+      if (selectedCategories.length > 0 && !selectedCategories.includes(product.category)) {
+        return false
+      }
+
+      // State filter
+      if (selectedStates.length > 0 && !selectedStates.includes(product.stockStatus)) {
+        return false
+      }
+
+      return true
+    })
+  }
+
   // Filter and sort products
-  const filteredProducts = getFilteredProductsByTab(allProducts)
+  const filteredProducts = applyFilters(getFilteredProductsByTab(allProducts))
     .filter(product =>
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -240,6 +296,53 @@ export const OutOfStockTable = () => {
     }
   }
 
+  // Filter helper functions
+  const toggleFilter = (filterType: 'promotions' | 'brands' | 'categories' | 'states', value: string) => {
+    const setters = {
+      promotions: setSelectedPromotions,
+      brands: setSelectedBrands,
+      categories: setSelectedCategories,
+      states: setSelectedStates
+    }
+
+    const getters = {
+      promotions: selectedPromotions,
+      brands: selectedBrands,
+      categories: selectedCategories,
+      states: selectedStates
+    }
+
+    const currentValues = getters[filterType]
+    const setter = setters[filterType]
+
+    if (currentValues.includes(value)) {
+      setter(currentValues.filter(item => item !== value))
+    } else {
+      setter([...currentValues, value])
+    }
+  }
+
+  const clearAllFilters = () => {
+    setSelectedPromotions([])
+    setSelectedBrands([])
+    setSelectedCategories([])
+    setSelectedStates([])
+  }
+
+  const getActiveFiltersCount = () => {
+    return selectedPromotions.length + selectedBrands.length + selectedCategories.length + selectedStates.length
+  }
+
+  const getStateLabel = (state: string) => {
+    const labels = {
+      critical: "Crítico",
+      low: "Bajo",
+      medium: "Medio",
+      good: "Bueno"
+    }
+    return labels[state as keyof typeof labels] || state
+  }
+
   return (
     <Card className="w-full">
       <CardHeader>
@@ -265,6 +368,139 @@ export const OutOfStockTable = () => {
             </div>
           </div>
         </div>
+
+        {/* Filter Section */}
+        <div className="flex items-center gap-2 mt-4">
+          <div className="flex items-center gap-1 text-sm text-muted-foreground">
+            <Filter className="h-4 w-4" />
+            Filtros:
+          </div>
+
+          {/* Promotions Filter */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="h-8">
+                Promociones
+                {selectedPromotions.length > 0 && (
+                  <Badge variant="secondary" className="ml-1 h-4 px-1 text-xs">
+                    {selectedPromotions.length}
+                  </Badge>
+                )}
+                <ChevronDown className="ml-1 h-3 w-3" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48">
+              <DropdownMenuLabel>Filtrar por promociones</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {promotionOptions.map((option) => (
+                <DropdownMenuCheckboxItem
+                  key={option}
+                  checked={selectedPromotions.includes(option)}
+                  onCheckedChange={() => toggleFilter('promotions', option)}
+                >
+                  {option}
+                </DropdownMenuCheckboxItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Brands Filter */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="h-8">
+                Marcas
+                {selectedBrands.length > 0 && (
+                  <Badge variant="secondary" className="ml-1 h-4 px-1 text-xs">
+                    {selectedBrands.length}
+                  </Badge>
+                )}
+                <ChevronDown className="ml-1 h-3 w-3" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48">
+              <DropdownMenuLabel>Filtrar por marca</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {uniqueBrands.map((brand) => (
+                <DropdownMenuCheckboxItem
+                  key={brand}
+                  checked={selectedBrands.includes(brand)}
+                  onCheckedChange={() => toggleFilter('brands', brand)}
+                >
+                  {brand}
+                </DropdownMenuCheckboxItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Categories Filter */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="h-8">
+                Categorías
+                {selectedCategories.length > 0 && (
+                  <Badge variant="secondary" className="ml-1 h-4 px-1 text-xs">
+                    {selectedCategories.length}
+                  </Badge>
+                )}
+                <ChevronDown className="ml-1 h-3 w-3" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48">
+              <DropdownMenuLabel>Filtrar por categoría</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {uniqueCategories.map((category) => (
+                <DropdownMenuCheckboxItem
+                  key={category}
+                  checked={selectedCategories.includes(category)}
+                  onCheckedChange={() => toggleFilter('categories', category)}
+                >
+                  {category}
+                </DropdownMenuCheckboxItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* States Filter */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="h-8">
+                Estado
+                {selectedStates.length > 0 && (
+                  <Badge variant="secondary" className="ml-1 h-4 px-1 text-xs">
+                    {selectedStates.length}
+                  </Badge>
+                )}
+                <ChevronDown className="ml-1 h-3 w-3" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48">
+              <DropdownMenuLabel>Filtrar por estado</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {uniqueStates.map((state) => (
+                <DropdownMenuCheckboxItem
+                  key={state}
+                  checked={selectedStates.includes(state)}
+                  onCheckedChange={() => toggleFilter('states', state)}
+                >
+                  {getStateLabel(state)}
+                </DropdownMenuCheckboxItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Clear Filters Button */}
+          {getActiveFiltersCount() > 0 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearAllFilters}
+              className="h-8 px-2 text-muted-foreground hover:text-foreground"
+            >
+              <X className="h-3 w-3 mr-1" />
+              Limpiar ({getActiveFiltersCount()})
+            </Button>
+          )}
+        </div>
       </CardHeader>
       <CardContent>
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -287,7 +523,7 @@ export const OutOfStockTable = () => {
           </TabsContent>
         </Tabs>
       </CardContent>
-    </Card>
+    </Card >
   )
 
   function renderTableContent() {
@@ -397,34 +633,6 @@ export const OutOfStockTable = () => {
               ))}
             </TableBody>
           </Table>
-        </div>
-
-        {/* Summary Stats */}
-        <div className="grid grid-cols-4 gap-4 mt-6 pt-4 border-t">
-          <div className="text-center">
-            <p className="text-2xl font-bold text-red-600">
-              {filteredProducts.filter(p => p.stockStatus === "critical").length}
-            </p>
-            <p className="text-sm text-muted-foreground">Productos Críticos</p>
-          </div>
-          <div className="text-center">
-            <p className="text-2xl font-bold text-orange-600">
-              {filteredProducts.filter(p => p.stockStatus === "low").length}
-            </p>
-            <p className="text-sm text-muted-foreground">Stock Bajo</p>
-          </div>
-          <div className="text-center">
-            <p className="text-2xl font-bold text-blue-600">
-              {filteredProducts.filter(p => p.activePromotion).length}
-            </p>
-            <p className="text-sm text-muted-foreground">Con Promoción</p>
-          </div>
-          <div className="text-center">
-            <p className="text-2xl font-bold text-green-600">
-              {filteredProducts.filter(p => p.isNewProduct).length}
-            </p>
-            <p className="text-sm text-muted-foreground">Productos Nuevos</p>
-          </div>
         </div>
       </>
     )
