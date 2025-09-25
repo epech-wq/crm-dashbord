@@ -93,7 +93,7 @@ export const DataManagementDialog = ({ open, onOpenChange }: DataManagementDialo
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <FileText className="h-5 w-5" />
-            Carga y Reportaría
+            Carga y Reportería
           </DialogTitle>
           <DialogDescription>
             Descarga datos del sistema o sube reportes para análisis

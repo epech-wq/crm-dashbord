@@ -28,7 +28,7 @@ export const DataManagementButton = ({ currentView }: DataManagementButtonProps)
       >
         <Database className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
         <span className="font-medium text-emerald-900 dark:text-emerald-100">
-          Carga y Reportaría
+          Carga y Reportería
         </span>
       </Button>
 
