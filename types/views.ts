@@ -1,4 +1,4 @@
-export type UserView = "direccion-general" | "torre-control" | "vista-cliente" | "stock-productos"
+export type UserView = "direccion-general" | "torre-control" | "vista-cliente" | "stock-productos" | "gestion-promociones"
 
 export interface ViewConfig {
   id: UserView
@@ -70,6 +70,20 @@ export const viewConfigs: Record<UserView, ViewConfig> = {
       canViewAnalytics: true,
       canEditOrders: false,
       canViewCustomerData: false,
+    },
+  },
+  "gestion-promociones": {
+    id: "gestion-promociones",
+    name: "Gestión de Promociones",
+    description: "Vista especializada para gestión y análisis de promociones",
+    allowedWidgets: ["promotions", "promotionMetrics", "promotionCharts"],
+    defaultLayout: "promotions",
+    permissions: {
+      canViewFinancials: true,
+      canViewAllOrders: true,
+      canViewAnalytics: true,
+      canEditOrders: false,
+      canViewCustomerData: true,
     },
   },
 }

@@ -468,3 +468,155 @@ export const generateChartData = (period: string) => {
     conversion: Math.floor(Math.random() * 30) + 50,
   }))
 }
+
+// Promociones mock data
+export interface Promotion {
+  id: string
+  name: string
+  description: string
+  type: "percentage" | "fixed" | "bogo" | "bundle"
+  value: number
+  startDate: string
+  endDate: string
+  status: "active" | "inactive" | "scheduled" | "expired"
+  targetProducts: string[]
+  targetCustomerSegments: ("Enterprise" | "SMB" | "Startup")[]
+  minOrderValue?: number
+  maxDiscount?: number
+  usageLimit?: number
+  usageCount: number
+  salesBefore: number
+  salesAfter: number
+  salesBoostPercentage: number
+  createdBy: string
+  createdDate: string
+  lastModified: string
+}
+
+export const mockPromotions: Promotion[] = [
+  {
+    id: "PROMO001",
+    name: "Descuento Enterprise Q1",
+    description: "15% de descuento en CRM Enterprise Suite para clientes Enterprise",
+    type: "percentage",
+    value: 15,
+    startDate: "2024-01-01",
+    endDate: "2024-03-31",
+    status: "active",
+    targetProducts: ["PROD001"],
+    targetCustomerSegments: ["Enterprise"],
+    minOrderValue: 10000,
+    maxDiscount: 5000,
+    usageLimit: 50,
+    usageCount: 12,
+    salesBefore: 45000,
+    salesAfter: 67500,
+    salesBoostPercentage: 50,
+    createdBy: "Roberto Silva",
+    createdDate: "2023-12-15",
+    lastModified: "2024-01-10",
+  },
+  {
+    id: "PROMO002",
+    name: "Bundle Analytics + Soporte",
+    description: "Paquete especial: Analytics Dashboard Pro + Soporte Premium con 20% descuento",
+    type: "bundle",
+    value: 20,
+    startDate: "2024-01-15",
+    endDate: "2024-02-29",
+    status: "active",
+    targetProducts: ["PROD002", "PROD005"],
+    targetCustomerSegments: ["SMB", "Startup"],
+    minOrderValue: 5000,
+    usageLimit: 100,
+    usageCount: 28,
+    salesBefore: 23000,
+    salesAfter: 34500,
+    salesBoostPercentage: 50,
+    createdBy: "Ana Torres",
+    createdDate: "2024-01-05",
+    lastModified: "2024-01-15",
+  },
+  {
+    id: "PROMO003",
+    name: "Consultoría Gratis",
+    description: "Consultoría de implementación gratuita con compra de software superior a $20,000",
+    type: "bogo",
+    value: 12000,
+    startDate: "2023-12-01",
+    endDate: "2024-01-31",
+    status: "active",
+    targetProducts: ["PROD001", "PROD002"],
+    targetCustomerSegments: ["Enterprise", "SMB"],
+    minOrderValue: 20000,
+    usageLimit: 25,
+    usageCount: 8,
+    salesBefore: 52000,
+    salesAfter: 78000,
+    salesBoostPercentage: 50,
+    createdBy: "Patricia López",
+    createdDate: "2023-11-20",
+    lastModified: "2024-01-01",
+  },
+  {
+    id: "PROMO004",
+    name: "Descuento Startup",
+    description: "30% de descuento para startups en su primera compra",
+    type: "percentage",
+    value: 30,
+    startDate: "2024-01-01",
+    endDate: "2024-06-30",
+    status: "active",
+    targetProducts: ["PROD002", "PROD005"],
+    targetCustomerSegments: ["Startup"],
+    maxDiscount: 3000,
+    usageLimit: 75,
+    usageCount: 15,
+    salesBefore: 14500,
+    salesAfter: 21750,
+    salesBoostPercentage: 50,
+    createdBy: "Miguel Hernández",
+    createdDate: "2023-12-20",
+    lastModified: "2024-01-05",
+  },
+  {
+    id: "PROMO005",
+    name: "Black Friday Hardware",
+    description: "Descuento fijo de $5,000 en servidores dedicados",
+    type: "fixed",
+    value: 5000,
+    startDate: "2023-11-24",
+    endDate: "2023-11-27",
+    status: "expired",
+    targetProducts: ["PROD004"],
+    targetCustomerSegments: ["Enterprise", "SMB"],
+    usageLimit: 10,
+    usageCount: 10,
+    salesBefore: 75000,
+    salesAfter: 125000,
+    salesBoostPercentage: 66.7,
+    createdBy: "Carlos Mendoza",
+    createdDate: "2023-11-01",
+    lastModified: "2023-11-28",
+  },
+  {
+    id: "PROMO006",
+    name: "Promoción San Valentín",
+    description: "14% de descuento en todos los productos durante febrero",
+    type: "percentage",
+    value: 14,
+    startDate: "2024-02-01",
+    endDate: "2024-02-29",
+    status: "scheduled",
+    targetProducts: ["PROD001", "PROD002", "PROD003", "PROD004", "PROD005"],
+    targetCustomerSegments: ["Enterprise", "SMB", "Startup"],
+    usageLimit: 200,
+    usageCount: 0,
+    salesBefore: 0,
+    salesAfter: 0,
+    salesBoostPercentage: 0,
+    createdBy: "Ana Torres",
+    createdDate: "2024-01-20",
+    lastModified: "2024-01-20",
+  },
+]

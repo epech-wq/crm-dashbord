@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Eye, Users, Building, Shield, Package } from "lucide-react"
+import { Eye, Users, Building, Shield, Package, Tag } from "lucide-react"
 import { viewConfigs, type UserView } from "@/types/views"
 
 interface ViewSelectorProps {
@@ -37,6 +37,9 @@ export const ViewSelector = ({ currentView, onViewChange, className = "" }: View
         case "stock-productos":
           router.push("/stock-productos")
           break
+        case "gestion-promociones":
+          router.push("/gestion-promociones")
+          break
         default:
           router.push("/")
       }
@@ -53,6 +56,8 @@ export const ViewSelector = ({ currentView, onViewChange, className = "" }: View
         return <Users className="h-4 w-4" />
       case "stock-productos":
         return <Package className="h-4 w-4" />
+      case "gestion-promociones":
+        return <Tag className="h-4 w-4" />
       default:
         return <Eye className="h-4 w-4" />
     }
@@ -68,6 +73,8 @@ export const ViewSelector = ({ currentView, onViewChange, className = "" }: View
         return "bg-gray-500 hover:bg-gray-600"
       case "stock-productos":
         return "bg-orange-500 hover:bg-orange-600"
+      case "gestion-promociones":
+        return "bg-purple-500 hover:bg-purple-600"
       default:
         return "bg-primary hover:bg-primary/90"
     }
@@ -122,7 +129,10 @@ export const ViewSelector = ({ currentView, onViewChange, className = "" }: View
                           widget === "charts" ? "Gráficos" :
                             widget === "recentOrders" ? "Pedidos Recientes" :
                               widget === "orders" ? "Todos los Pedidos" :
-                                widget === "map" ? "Mapa" : widget}
+                                widget === "map" ? "Mapa" :
+                                  widget === "promotions" ? "Promociones" :
+                                    widget === "promotionMetrics" ? "Métricas de Promociones" :
+                                      widget === "promotionCharts" ? "Gráficos de Promociones" : widget}
                       </Badge>
                     ))}
                   </div>

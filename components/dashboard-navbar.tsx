@@ -3,12 +3,21 @@
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select"
-import { Calendar, Moon, Sun } from "lucide-react"
+import { Calendar, Moon, Sun, LogOut, User } from "lucide-react"
 import { useTheme } from "next-themes"
 import { FiltersSystem, type FilterState } from "@/components/filters-system"
 import { ViewSelector } from "@/components/view-selector"
 import { DataManagementButton } from "@/components/data-management-button"
 import { viewConfigs, type UserView } from "@/types/views"
+import { useAuth } from "@/contexts/auth-context"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 interface DashboardNavbarProps {
   // Layout and view state
@@ -29,11 +38,16 @@ export const DashboardNavbar = ({
   onFiltersChange,
 }: DashboardNavbarProps) => {
   const { theme, setTheme } = useTheme()
+  const { user, signOut } = useAuth()
   const currentViewConfig = viewConfigs[currentView]
 
   const handleThemeToggle = () => {
     const newTheme = theme === "dark" ? "light" : "dark"
     setTheme(newTheme)
+  }
+
+  const handleSignOut = async () => {
+    await signOut()
   }
 
   return (
@@ -112,6 +126,31 @@ export const DashboardNavbar = ({
               {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </Button>
           </div>
+
+          {/* User Menu */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="flex items-center gap-2">
+                <User className="h-4 w-4" />
+                <span className="hidden sm:inline-block">
+                  {user?.email?.split('@')[0] || 'Usuario'}
+                </span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>Mi Cuenta</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem disabled>
+                <User className="mr-2 h-4 w-4" />
+                {user?.email}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleSignOut} className="text-red-600">
+                <LogOut className="mr-2 h-4 w-4" />
+                Cerrar Sesión
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </header>

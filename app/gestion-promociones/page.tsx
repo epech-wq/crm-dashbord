@@ -1,10 +1,10 @@
 import DashboardLayout from "@/components/dashboard-layout"
 import { ProtectedRoute } from "@/components/auth/protected-route"
 
-export default function DireccionGeneralPage() {
+export default function GestionPromocionesPage() {
   return (
     <ProtectedRoute>
-      <DashboardLayout initialView="direccion-general" />
+      <DashboardLayout initialView="gestion-promociones" />
     </ProtectedRoute>
   )
 }

@@ -8,6 +8,9 @@ import { MetricsCard, RecentOrdersCard, ChartsCard, OrdersManagementCard, MapCar
 import { defaultFilters, applyFilters, type FilterState } from "@/components/filters-system"
 import { WidgetWrapper, filterDataByView, hideFinancialData } from "@/components/widget-wrapper"
 import { OutOfStockTable } from "@/components/out-of-stock-table"
+import { PromotionMetrics } from "@/components/promotion-metrics"
+import { PromotionPerformance } from "@/components/promotion-performance"
+import { PromotionsTable } from "@/components/promotions-table"
 import { mockOrders } from "@/components/mock-data"
 import { type UserView } from "@/types/views"
 
@@ -73,6 +76,17 @@ const getLayoutForView = (view: UserView) => {
         visibleMetrics: [],
         visibleCharts: ["statistics", "inventoryPercentage"],
       }
+    case "gestion-promociones":
+      return {
+        name: "Gestión de Promociones",
+        widgets: {
+          promotionMetrics: { visible: true, position: 1, size: "large" as const, rowsPerPage: 5 },
+          promotionPerformance: { visible: true, position: 2, size: "large" as const, rowsPerPage: 5 },
+          promotionsTable: { visible: true, position: 3, size: "large" as const, rowsPerPage: 10 },
+        },
+        visibleMetrics: [],
+        visibleCharts: [],
+      }
     default:
       return getLayoutForView("direccion-general")
   }
@@ -108,6 +122,9 @@ export default function DashboardLayout({ initialView }: DashboardLayoutProps) {
         break
       case "stock-productos":
         router.push("/stock-productos")
+        break
+      case "gestion-promociones":
+        router.push("/gestion-promociones")
         break
       default:
         router.push("/")
@@ -221,6 +238,24 @@ export default function DashboardLayout({ initialView }: DashboardLayoutProps) {
         return (
           <div key={widgetKey} className="col-span-full">
             <OutOfStockTable />
+          </div>
+        )
+      case "promotionMetrics":
+        return (
+          <div key={widgetKey} className="col-span-full">
+            <PromotionMetrics />
+          </div>
+        )
+      case "promotionPerformance":
+        return (
+          <div key={widgetKey} className="col-span-full">
+            <PromotionPerformance />
+          </div>
+        )
+      case "promotionsTable":
+        return (
+          <div key={widgetKey} className="col-span-full">
+            <PromotionsTable />
           </div>
         )
       default:
