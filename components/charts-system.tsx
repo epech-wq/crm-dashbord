@@ -188,8 +188,8 @@ export const ChartsGrid = ({ period, visibleCharts, hideFinancials = false }: Ch
     },
     {
       key: "trafficStats",
-      title: "Traffic Stats",
-      description: "Estadísticas de tráfico y rendimiento del sitio web",
+      title: "Estadísticas de Inventario",
+      description: "Métricas clave de stock, productos agotados y rotación de inventario",
       component: <TrafficStatsChart data={chartData} />,
     },
     {
@@ -246,6 +246,6 @@ export const availableCharts = [
   { key: "customerSegments", label: "Segmentación Clientes" },
   { key: "categoryPerformance", label: "Rendimiento Categorías" },
   { key: "channelAnalysis", label: "Análisis por Canal" },
-  { key: "trafficStats", label: "Traffic Stats" },
+  { key: "trafficStats", label: "Estadísticas de Inventario" },
   { key: "inventoryPercentage", label: "Porcentaje de Inventario" },
 ]

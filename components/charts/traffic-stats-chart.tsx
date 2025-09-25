@@ -39,31 +39,31 @@ const SparklineChart = ({ data, color }: { data: any[], color: string }) => (
 export const TrafficStatsChart = ({ data }: TrafficStatsChartProps) => {
   const trafficStats = [
     {
-      label: "New Subscribers",
-      value: "567K",
-      change: "+3.85%",
-      changeText: "then last Week",
+      label: "Productos en Stock",
+      value: "1,247",
+      change: "+8.2%",
+      changeText: "vs semana anterior",
       trend: "up" as const,
       sparklineData: generateSparklineData('up'),
       color: "#10b981"
     },
     {
-      label: "Conversion Rate",
-      value: "276K",
-      change: "-5.39%",
-      changeText: "then last Week",
+      label: "Productos Agotados",
+      value: "89",
+      change: "-12.5%",
+      changeText: "vs semana anterior",
       trend: "down" as const,
       sparklineData: generateSparklineData('down'),
-      color: "#10b981"
+      color: "#ef4444"
     },
     {
-      label: "Page Bounce Rate",
-      value: "285",
-      change: "+12.74%",
-      changeText: "then last Week",
+      label: "Rotación de Inventario",
+      value: "4.2x",
+      change: "+15.3%",
+      changeText: "vs semana anterior",
       trend: "up" as const,
       sparklineData: generateSparklineData('up'),
-      color: "#10b981"
+      color: "#3b82f6"
     }
   ]
 
@@ -71,9 +71,11 @@ export const TrafficStatsChart = ({ data }: TrafficStatsChartProps) => {
     <div className="space-y-6">
       {trafficStats.map((stat, index) => {
         const isPositive = stat.change.startsWith('+')
-        const changeColor = stat.trend === 'up' && isPositive ? "text-green-600" :
-          stat.trend === 'down' && !isPositive ? "text-red-600" :
-            isPositive ? "text-green-600" : "text-red-600"
+        // For "Productos Agotados", decreasing is good (green), increasing is bad (red)
+        // For other metrics, increasing is generally good
+        const changeColor = stat.label === "Productos Agotados"
+          ? (isPositive ? "text-red-600" : "text-green-600")
+          : (isPositive ? "text-green-600" : "text-red-600")
 
         return (
           <div key={index} className="space-y-2">
