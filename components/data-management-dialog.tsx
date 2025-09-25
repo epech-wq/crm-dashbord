@@ -44,6 +44,19 @@ export const DataManagementDialog = ({ open, onOpenChange }: DataManagementDialo
       return
     }
 
+    // Validate file type
+    const allowedTypes = ['.csv', '.xlsx', '.xls']
+    const fileExtension = uploadFile.name.toLowerCase().substring(uploadFile.name.lastIndexOf('.'))
+
+    if (!allowedTypes.includes(fileExtension)) {
+      toast({
+        title: "Formato no válido",
+        description: "Solo se permiten archivos CSV y Excel (.csv, .xlsx, .xls)",
+        variant: "destructive",
+      })
+      return
+    }
+
     // Simulate upload functionality
     toast({
       title: "Subida simulada",
@@ -56,6 +69,20 @@ export const DataManagementDialog = ({ open, onOpenChange }: DataManagementDialo
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
+      // Validate file type on selection
+      const allowedTypes = ['.csv', '.xlsx', '.xls']
+      const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'))
+
+      if (!allowedTypes.includes(fileExtension)) {
+        toast({
+          title: "Formato no válido",
+          description: "Solo se permiten archivos CSV y Excel (.csv, .xlsx, .xls)",
+          variant: "destructive",
+        })
+        event.target.value = '' // Clear the input
+        return
+      }
+
       setUploadFile(file)
     }
   }
@@ -91,8 +118,6 @@ export const DataManagementDialog = ({ open, onOpenChange }: DataManagementDialo
               >
                 <option value="csv">CSV</option>
                 <option value="xlsx">Excel (XLSX)</option>
-                <option value="json">JSON</option>
-                <option value="pdf">PDF</option>
               </select>
             </div>
 
@@ -117,12 +142,15 @@ export const DataManagementDialog = ({ open, onOpenChange }: DataManagementDialo
               <Input
                 id="file-upload"
                 type="file"
-                accept=".csv,.xlsx,.xls,.json,.pdf"
+                accept=".csv,.xlsx,.xls"
                 onChange={handleFileChange}
                 className="cursor-pointer"
               />
+              <p className="text-xs text-muted-foreground">
+                Solo se permiten archivos CSV y Excel (.csv, .xlsx, .xls)
+              </p>
               {uploadFile && (
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-green-600 font-medium">
                   Archivo seleccionado: {uploadFile.name}
                 </p>
               )}
