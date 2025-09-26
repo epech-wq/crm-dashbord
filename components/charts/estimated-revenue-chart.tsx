@@ -6,9 +6,10 @@ import { Progress } from "@/components/ui/progress"
 interface EstimatedRevenueChartProps {
   data: any
   hideFinancials?: boolean
+  period?: string
 }
 
-export const EstimatedRevenueChart = ({ data, hideFinancials = false }: EstimatedRevenueChartProps) => {
+export const EstimatedRevenueChart = ({ data, hideFinancials = false, period = "month" }: EstimatedRevenueChartProps) => {
   if (hideFinancials) {
     return (
       <div className="flex items-center justify-center h-48 text-muted-foreground">
@@ -17,22 +18,39 @@ export const EstimatedRevenueChart = ({ data, hideFinancials = false }: Estimate
     )
   }
 
-  // Mock goals data - in a real app this would come from props or API
-  const currentRevenue = 45231.89
-  const revenueGoal = 60000
-  const revenueProgress = (currentRevenue / revenueGoal) * 100
+  // Calculate period-based revenue data from the provided data
+  const salesData = data.salesData || []
+  const currentRevenue = salesData.reduce((sum: number, item: any) => sum + item.ventas, 0)
 
-  const marketingGoal = 25000
-  const marketingCurrent = 18500
-  const marketingProgress = (marketingCurrent / marketingGoal) * 100
-  const marketingDifference = marketingCurrent - 16200 // Previous period
-  const marketingDifferencePercent = ((marketingDifference / 16200) * 100).toFixed(1)
+  // Set goals based on period - different targets for different time frames
+  const periodGoals = {
+    day: { revenue: 2000, marketing: 800, ventas: 1200 },
+    week: { revenue: 12000, marketing: 5000, ventas: 7000 },
+    month: { revenue: 60000, marketing: 25000, ventas: 35000 },
+    quarter: { revenue: 180000, marketing: 75000, ventas: 105000 },
+    year: { revenue: 720000, marketing: 300000, ventas: 420000 }
+  }
 
-  const ventasGoal = 35000
-  const ventasCurrent = 26731.89
-  const ventasProgress = (ventasCurrent / ventasGoal) * 100
-  const ventasDifference = ventasCurrent - 22800 // Previous period
-  const ventasDifferencePercent = ((ventasDifference / 22800) * 100).toFixed(1)
+  const goals = periodGoals[period as keyof typeof periodGoals] || periodGoals.month
+  const revenueGoal = goals.revenue
+  const revenueProgress = Math.min((currentRevenue / revenueGoal) * 100, 100)
+
+  // Calculate marketing and sales data based on period and actual data
+  const marketingGoal = goals.marketing
+  const marketingCurrent = Math.floor(currentRevenue * 0.4) // 40% of revenue typically from marketing
+  const marketingProgress = Math.min((marketingCurrent / marketingGoal) * 100, 100)
+  // Calculate previous period data from salesData
+  const previousRevenue = salesData.reduce((sum: number, item: any) => sum + (item.ventasAnterior || 0), 0)
+  const marketingPrevious = Math.floor(previousRevenue * 0.4)
+  const marketingDifference = marketingCurrent - marketingPrevious
+  const marketingDifferencePercent = marketingPrevious > 0 ? ((marketingDifference / marketingPrevious) * 100).toFixed(1) : "0.0"
+
+  const ventasGoal = goals.ventas
+  const ventasCurrent = Math.floor(currentRevenue * 0.6) // 60% of revenue from direct sales
+  const ventasProgress = Math.min((ventasCurrent / ventasGoal) * 100, 100)
+  const ventasPrevious = Math.floor(previousRevenue * 0.6)
+  const ventasDifference = ventasCurrent - ventasPrevious
+  const ventasDifferencePercent = ventasPrevious > 0 ? ((ventasDifference / ventasPrevious) * 100).toFixed(1) : "0.0"
 
   // Data for semi-circular chart
   const chartData = [
@@ -44,7 +62,7 @@ export const EstimatedRevenueChart = ({ data, hideFinancials = false }: Estimate
     <div className="space-y-6">
       {/* Semi-circular chart for revenue goal */}
       <div className="relative">
-        <ResponsiveContainer width="100%" height={200}>
+        <ResponsiveContainer width="100%" height={220}>
           <PieChart>
             <Pie
               data={chartData}
@@ -52,10 +70,11 @@ export const EstimatedRevenueChart = ({ data, hideFinancials = false }: Estimate
               cy="85%"
               startAngle={180}
               endAngle={0}
-              innerRadius={70}
-              outerRadius={100}
-              paddingAngle={2}
+              innerRadius={85}
+              outerRadius={120}
+              paddingAngle={1}
               dataKey="value"
+              stroke="none"
             >
               {chartData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.fill} />
@@ -65,7 +84,7 @@ export const EstimatedRevenueChart = ({ data, hideFinancials = false }: Estimate
         </ResponsiveContainer>
 
         {/* Center text */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center pt-12">
+        <div className="absolute inset-0 flex flex-col items-center justify-center pt-16">
           <div className="text-2xl font-bold text-foreground">
             ${(currentRevenue / 1000).toFixed(1)}K
           </div>
@@ -74,6 +93,9 @@ export const EstimatedRevenueChart = ({ data, hideFinancials = false }: Estimate
           </div>
         </div>
       </div>
+
+      {/* Divider */}
+      <div className="border-t border-border"></div>
 
       {/* Progress bars for Marketing and Ventas */}
       <div className="space-y-4">

@@ -4,6 +4,7 @@ import { LineChart, Line, ResponsiveContainer } from "recharts"
 
 interface TrafficStatsChartProps {
   data?: any
+  period?: string
 }
 
 // Generate sample sparkline data for each metric
@@ -36,33 +37,85 @@ const SparklineChart = ({ data, color }: { data: any[], color: string }) => (
   </div>
 )
 
-export const TrafficStatsChart = ({ data }: TrafficStatsChartProps) => {
+export const TrafficStatsChart = ({ data, period = "month" }: TrafficStatsChartProps) => {
+  // Generate period-specific data based on the selected timeframe
+  const getPeriodData = (period: string) => {
+    const periodMultipliers = {
+      day: { stock: 0.1, outOfStock: 0.05, rotation: 0.2 },
+      week: { stock: 0.7, outOfStock: 0.3, rotation: 1.4 },
+      month: { stock: 1, outOfStock: 1, rotation: 4.2 },
+      quarter: { stock: 3, outOfStock: 2.5, rotation: 12.6 },
+      year: { stock: 12, outOfStock: 8, rotation: 50.4 }
+    }
+
+    const multiplier = periodMultipliers[period as keyof typeof periodMultipliers] || periodMultipliers.month
+
+    // Base values that scale with period
+    const baseStock = 1247
+    const baseOutOfStock = 89
+    const baseRotation = multiplier.rotation
+
+    // Calculate period-appropriate values
+    const stockValue = Math.floor(baseStock * multiplier.stock)
+    const outOfStockValue = Math.floor(baseOutOfStock * multiplier.outOfStock)
+
+    // Generate realistic changes based on period
+    const stockChange = (Math.random() * 20 - 5).toFixed(1) // -5% to +15%
+    const outOfStockChange = (Math.random() * -15 - 5).toFixed(1) // -20% to -5% (negative is good)
+    const rotationChange = (Math.random() * 25 + 5).toFixed(1) // +5% to +30%
+
+    return {
+      stock: stockValue,
+      outOfStock: outOfStockValue,
+      rotation: baseRotation,
+      stockChange: parseFloat(stockChange),
+      outOfStockChange: parseFloat(outOfStockChange),
+      rotationChange: parseFloat(rotationChange)
+    }
+  }
+
+  const periodData = getPeriodData(period)
+
+  // Get period-specific comparison text
+  const getComparisonText = (period: string) => {
+    switch (period) {
+      case "day": return "vs día anterior"
+      case "week": return "vs semana anterior"
+      case "month": return "vs mes anterior"
+      case "quarter": return "vs trimestre anterior"
+      case "year": return "vs año anterior"
+      default: return "vs período anterior"
+    }
+  }
+
+  const comparisonText = getComparisonText(period)
+
   const trafficStats = [
     {
       label: "Productos en Stock",
-      value: "1,247",
-      change: "+8.2%",
-      changeText: "vs semana anterior",
-      trend: "up" as const,
-      sparklineData: generateSparklineData('up'),
+      value: periodData.stock.toLocaleString(),
+      change: `${periodData.stockChange >= 0 ? '+' : ''}${periodData.stockChange}%`,
+      changeText: comparisonText,
+      trend: periodData.stockChange >= 0 ? "up" as const : "down" as const,
+      sparklineData: generateSparklineData(periodData.stockChange >= 0 ? 'up' : 'down'),
       color: "#10b981"
     },
     {
       label: "Productos Agotados",
-      value: "89",
-      change: "-12.5%",
-      changeText: "vs semana anterior",
-      trend: "down" as const,
-      sparklineData: generateSparklineData('down'),
+      value: periodData.outOfStock.toString(),
+      change: `${periodData.outOfStockChange >= 0 ? '+' : ''}${periodData.outOfStockChange}%`,
+      changeText: comparisonText,
+      trend: periodData.outOfStockChange < 0 ? "down" as const : "up" as const,
+      sparklineData: generateSparklineData(periodData.outOfStockChange < 0 ? 'down' : 'up'),
       color: "#ef4444"
     },
     {
       label: "Rotación de Inventario",
-      value: "4.2x",
-      change: "+15.3%",
-      changeText: "vs semana anterior",
-      trend: "up" as const,
-      sparklineData: generateSparklineData('up'),
+      value: `${periodData.rotation.toFixed(1)}x`,
+      change: `${periodData.rotationChange >= 0 ? '+' : ''}${periodData.rotationChange}%`,
+      changeText: comparisonText,
+      trend: periodData.rotationChange >= 0 ? "up" as const : "down" as const,
+      sparklineData: generateSparklineData(periodData.rotationChange >= 0 ? 'up' : 'down'),
       color: "#3b82f6"
     }
   ]

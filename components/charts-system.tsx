@@ -142,7 +142,8 @@ export const ChartsGrid = ({ period, visibleCharts, hideFinancials = false }: Ch
     {
       key: "estimatedRevenue",
       title: "Ingresos Estimados",
-      component: <EstimatedRevenueChart data={chartData} hideFinancials={hideFinancials} />,
+      // description: `Proyección de ingresos y metas para el ${period === "day" ? "día" : period === "week" ? "semana" : period === "month" ? "mes" : period === "quarter" ? "trimestre" : "año"} actual`,
+      component: <EstimatedRevenueChart data={chartData} hideFinancials={hideFinancials} period={period} />,
     },
     {
       key: "salesTrend",
@@ -189,8 +190,8 @@ export const ChartsGrid = ({ period, visibleCharts, hideFinancials = false }: Ch
     {
       key: "trafficStats",
       title: "Estadísticas de Inventario",
-      description: "Métricas clave de stock, productos agotados y rotación de inventario",
-      component: <TrafficStatsChart data={chartData} />,
+      description: `Métricas clave de stock, productos agotados y rotación de inventario para el ${period === "day" ? "día" : period === "week" ? "semana" : period === "month" ? "mes" : period === "quarter" ? "trimestre" : "año"} actual`,
+      component: <TrafficStatsChart data={chartData} period={period} />,
     },
     {
       key: "inventoryPercentage",

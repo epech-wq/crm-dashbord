@@ -42,10 +42,10 @@ export const StatisticsChart = ({ data, hideFinancials = false, period = "month"
 
 
 
-  // Generate YTY monthly data (Jan-Sep only for current year)
-  const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep"]
-  const currentMonth = new Date().getMonth() // 0-based index (but limited to Sep)
-  const maxDisplayMonth = Math.min(currentMonth, 8) // Limit to September (index 8)
+  // Generate YTY monthly data (Jan-Dec for full year)
+  const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
+  const currentMonth = new Date().getMonth() // 0-based index
+  const maxDisplayMonth = currentMonth // Show actual data up to current month
 
   // Calculate average growth rate from completed months for predictions
   const completedMonthsData: number[] = []
@@ -55,7 +55,7 @@ export const StatisticsChart = ({ data, hideFinancials = false, period = "month"
     const isCurrentOrPastMonth = index <= maxDisplayMonth
     const isFutureMonth = index > maxDisplayMonth
 
-    // Previous year sales (consistent pattern for all 9 months)
+    // Previous year sales (consistent pattern for all 12 months)
     const previousSeasonalMultiplier = 0.75 + Math.sin(((index + 1) / 12) * 2 * Math.PI) * 0.25 + (Math.random() - 0.5) * 0.1
     const previousSales = (previousYearSales / 12) * previousSeasonalMultiplier
 
@@ -71,7 +71,7 @@ export const StatisticsChart = ({ data, hideFinancials = false, period = "month"
       // Projection for completed months (slight optimistic adjustment)
       projectionSales = currentSales * (1.05 + Math.random() * 0.1)
     } else {
-      // Future months (within Jan-Sep range) - use prediction based on trend
+      // Future months - use prediction based on trend
       const avgCompletedSales = completedMonthsData.length > 0
         ? completedMonthsData.reduce((sum, val) => sum + val, 0) / completedMonthsData.length
         : baseSales
@@ -139,12 +139,12 @@ export const StatisticsChart = ({ data, hideFinancials = false, period = "month"
           <span className="text-muted-foreground">Año Anterior</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded-full bg-orange-600"></div>
-          <span className="text-muted-foreground">Proyección</span>
+          <div className="w-3 h-2 bg-orange-600" style={{ clipPath: 'polygon(0 0, 100% 0, 100% 50%, 0 50%)' }}></div>
+          <span className="text-muted-foreground">Meta</span>
         </div>
         <div className="flex items-center gap-1">
           <div className="w-3 h-3 rounded-full bg-purple-600"></div>
-          <span className="text-muted-foreground">Predicción Futura</span>
+          <span className="text-muted-foreground">Proyección</span>
         </div>
       </div>
 
