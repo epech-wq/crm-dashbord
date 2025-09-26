@@ -195,7 +195,7 @@ export const MetricCard = ({ title, data, icon: Icon, period, isLowerBetter = fa
             >
               {change > 0 ? "+" : ""}{change.toFixed(1)}%
             </Badge>
-            <p className="text-xs">{getPeriodText(period)}</p>
+            {/* <p className="text-xs">{getPeriodText(period)}</p> */}
           </div>
         </div>
       </div>

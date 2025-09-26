@@ -101,7 +101,7 @@ export function PromotionMetrics() {
                   >
                     {metric.change}
                   </Badge>
-                  <p className="text-xs">vs mes anterior</p>
+                  {/* <p className="text-xs">vs mes anterior</p> */}
                 </div>
               </div>
             </div>

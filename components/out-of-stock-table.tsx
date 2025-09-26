@@ -55,6 +55,104 @@ interface ExtendedProduct {
   stockStatus: "critical" | "low" | "medium" | "good"
 }
 
+// Alert interface for stock alerts
+interface StockAlert {
+  id: string
+  type: "stock_critico" | "stock_bajo" | "demanda_alta" | "reposicion_urgente" | "producto_descontinuado" | "proveedor_retraso"
+  priority: "alta" | "media" | "baja"
+  product: string
+  productId: string
+  message: string
+  timestamp: Date
+  status: "activa" | "en_proceso" | "resuelta"
+  affectedQuantity?: number
+  estimatedResolution?: Date
+  assignedTo?: string
+}
+
+// Generate stock alerts
+const generateStockAlerts = (): StockAlert[] => {
+  const alertTypes = [
+    {
+      type: "stock_critico" as const, priority: "alta" as const, messages: [
+        "Stock crítico: Solo quedan 2 unidades disponibles",
+        "Inventario agotándose: Menos de 5 unidades en stock",
+        "Alerta crítica: Stock por debajo del mínimo establecido"
+      ]
+    },
+    {
+      type: "stock_bajo" as const, priority: "media" as const, messages: [
+        "Stock bajo: Se recomienda reposición en los próximos 7 días",
+        "Inventario reducido: 15% del stock mínimo disponible",
+        "Nivel de stock por debajo del punto de reorden"
+      ]
+    },
+    {
+      type: "demanda_alta" as const, priority: "alta" as const, messages: [
+        "Demanda inesperada: Ventas 300% por encima del promedio",
+        "Pico de demanda detectado: Stock insuficiente para demanda actual",
+        "Alta rotación: Producto vendido 5 veces más rápido que lo usual"
+      ]
+    },
+    {
+      type: "reposicion_urgente" as const, priority: "alta" as const, messages: [
+        "Reposición urgente requerida: Tiempo de entrega crítico",
+        "Stock agotado: Necesaria reposición inmediata",
+        "Pedido de emergencia necesario para evitar ruptura de stock"
+      ]
+    },
+    {
+      type: "producto_descontinuado" as const, priority: "baja" as const, messages: [
+        "Producto descontinuado: Liquidar stock restante",
+        "Fin de línea: Últimas unidades disponibles",
+        "Producto fuera de catálogo: Gestionar inventario remanente"
+      ]
+    },
+    {
+      type: "proveedor_retraso" as const, priority: "media" as const, messages: [
+        "Retraso del proveedor: Entrega pospuesta 2 semanas",
+        "Problema logístico: Demora en la cadena de suministro",
+        "Proveedor reporta retraso: Nueva fecha estimada de entrega"
+      ]
+    }
+  ]
+
+  const products = [...generateExtendedProducts(), ...generateAdditionalProducts()]
+  const alerts: StockAlert[] = []
+
+  // Generate 15-20 alerts
+  for (let i = 0; i < 18; i++) {
+    const alertType = alertTypes[Math.floor(Math.random() * alertTypes.length)]
+    const product = products[Math.floor(Math.random() * products.length)]
+    const message = alertType.messages[Math.floor(Math.random() * alertType.messages.length)]
+
+    const daysAgo = Math.floor(Math.random() * 7)
+    const timestamp = new Date()
+    timestamp.setDate(timestamp.getDate() - daysAgo)
+
+    const statuses: ("activa" | "en_proceso" | "resuelta")[] = ["activa", "en_proceso", "resuelta"]
+    const status = statuses[Math.floor(Math.random() * statuses.length)]
+
+    const assignees = ["Ana García", "Carlos López", "María Rodríguez", "Juan Pérez", "Laura Martín"]
+
+    alerts.push({
+      id: `ALERT${String(i + 1).padStart(3, '0')}`,
+      type: alertType.type,
+      priority: alertType.priority,
+      product: product.name,
+      productId: product.id,
+      message,
+      timestamp,
+      status,
+      affectedQuantity: alertType.type.includes('stock') ? Math.floor(Math.random() * 50) + 1 : undefined,
+      estimatedResolution: status !== "resuelta" ? new Date(Date.now() + Math.random() * 14 * 24 * 60 * 60 * 1000) : undefined,
+      assignedTo: status === "en_proceso" ? assignees[Math.floor(Math.random() * assignees.length)] : undefined
+    })
+  }
+
+  return alerts.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
+}
+
 // Generate extended product data with out-of-stock information
 const generateExtendedProducts = (): ExtendedProduct[] => {
   const brands = ["TechCorp", "InnovaLabs", "DataSoft", "CloudTech", "SystemPro", "DevTools"]
@@ -156,8 +254,14 @@ export const OutOfStockTable = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [selectedStates, setSelectedStates] = useState<string[]>([])
 
+  // Alert filter states
+  const [selectedAlertTypes, setSelectedAlertTypes] = useState<string[]>([])
+  const [selectedAlertPriorities, setSelectedAlertPriorities] = useState<string[]>([])
+  const [selectedAlertStatuses, setSelectedAlertStatuses] = useState<string[]>([])
+
   // Combine original and additional products
   const allProducts = [...generateExtendedProducts(), ...generateAdditionalProducts()]
+  const allAlerts = generateStockAlerts()
 
   // Get unique values for filters
   const uniqueBrands = Array.from(new Set(allProducts.map(p => p.brand))).sort()
@@ -297,19 +401,25 @@ export const OutOfStockTable = () => {
   }
 
   // Filter helper functions
-  const toggleFilter = (filterType: 'promotions' | 'brands' | 'categories' | 'states', value: string) => {
+  const toggleFilter = (filterType: 'promotions' | 'brands' | 'categories' | 'states' | 'alertTypes' | 'alertPriorities' | 'alertStatuses', value: string) => {
     const setters = {
       promotions: setSelectedPromotions,
       brands: setSelectedBrands,
       categories: setSelectedCategories,
-      states: setSelectedStates
+      states: setSelectedStates,
+      alertTypes: setSelectedAlertTypes,
+      alertPriorities: setSelectedAlertPriorities,
+      alertStatuses: setSelectedAlertStatuses
     }
 
     const getters = {
       promotions: selectedPromotions,
       brands: selectedBrands,
       categories: selectedCategories,
-      states: selectedStates
+      states: selectedStates,
+      alertTypes: selectedAlertTypes,
+      alertPriorities: selectedAlertPriorities,
+      alertStatuses: selectedAlertStatuses
     }
 
     const currentValues = getters[filterType]
@@ -327,10 +437,14 @@ export const OutOfStockTable = () => {
     setSelectedBrands([])
     setSelectedCategories([])
     setSelectedStates([])
+    setSelectedAlertTypes([])
+    setSelectedAlertPriorities([])
+    setSelectedAlertStatuses([])
   }
 
   const getActiveFiltersCount = () => {
-    return selectedPromotions.length + selectedBrands.length + selectedCategories.length + selectedStates.length
+    return selectedPromotions.length + selectedBrands.length + selectedCategories.length + selectedStates.length +
+      selectedAlertTypes.length + selectedAlertPriorities.length + selectedAlertStatuses.length
   }
 
   const getStateLabel = (state: string) => {
@@ -341,6 +455,87 @@ export const OutOfStockTable = () => {
       good: "Bueno"
     }
     return labels[state as keyof typeof labels] || state
+  }
+
+  // Alert helper functions
+  const getAlertTypeLabel = (type: string) => {
+    const labels = {
+      stock_critico: "Stock Crítico",
+      stock_bajo: "Stock Bajo",
+      demanda_alta: "Demanda Alta",
+      reposicion_urgente: "Reposición Urgente",
+      producto_descontinuado: "Producto Descontinuado",
+      proveedor_retraso: "Retraso Proveedor"
+    }
+    return labels[type as keyof typeof labels] || type
+  }
+
+  const getPriorityBadge = (priority: "alta" | "media" | "baja") => {
+    const styles = {
+      alta: "bg-red-100 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800",
+      media: "bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-300 dark:border-yellow-800",
+      baja: "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800"
+    }
+
+    const labels = {
+      alta: "Alta",
+      media: "Media",
+      baja: "Baja"
+    }
+
+    return (
+      <Badge variant="outline" className={`font-semibold ${styles[priority]}`}>
+        {labels[priority]}
+      </Badge>
+    )
+  }
+
+  const getStatusBadge = (status: "activa" | "en_proceso" | "resuelta") => {
+    const styles = {
+      activa: "bg-red-100 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800",
+      en_proceso: "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800",
+      resuelta: "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800"
+    }
+
+    const labels = {
+      activa: "Activa",
+      en_proceso: "En Proceso",
+      resuelta: "Resuelta"
+    }
+
+    return (
+      <Badge variant="outline" className={`font-semibold ${styles[status]}`}>
+        {labels[status]}
+      </Badge>
+    )
+  }
+
+  // Filter alerts
+  const getFilteredAlerts = () => {
+    return allAlerts.filter(alert => {
+      // Search filter
+      if (searchTerm && !alert.product.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        !alert.message.toLowerCase().includes(searchTerm.toLowerCase())) {
+        return false
+      }
+
+      // Type filter
+      if (selectedAlertTypes.length > 0 && !selectedAlertTypes.includes(alert.type)) {
+        return false
+      }
+
+      // Priority filter
+      if (selectedAlertPriorities.length > 0 && !selectedAlertPriorities.includes(alert.priority)) {
+        return false
+      }
+
+      // Status filter
+      if (selectedAlertStatuses.length > 0 && !selectedAlertStatuses.includes(alert.status)) {
+        return false
+      }
+
+      return true
+    })
   }
 
   return (
@@ -376,117 +571,207 @@ export const OutOfStockTable = () => {
             Filtros:
           </div>
 
-          {/* Promotions Filter */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="h-8">
-                Promociones
-                {selectedPromotions.length > 0 && (
-                  <Badge variant="secondary" className="ml-1 h-4 px-1 text-xs">
-                    {selectedPromotions.length}
-                  </Badge>
-                )}
-                <ChevronDown className="ml-1 h-3 w-3" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-48">
-              <DropdownMenuLabel>Filtrar por promociones</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {promotionOptions.map((option) => (
-                <DropdownMenuCheckboxItem
-                  key={option}
-                  checked={selectedPromotions.includes(option)}
-                  onCheckedChange={() => toggleFilter('promotions', option)}
-                >
-                  {option}
-                </DropdownMenuCheckboxItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {activeTab === "alerts" ? (
+            <>
+              {/* Alert Type Filter */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="h-8">
+                    Tipo de Alerta
+                    {selectedAlertTypes.length > 0 && (
+                      <Badge variant="secondary" className="ml-1 h-4 px-1 text-xs">
+                        {selectedAlertTypes.length}
+                      </Badge>
+                    )}
+                    <ChevronDown className="ml-1 h-3 w-3" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-56">
+                  <DropdownMenuLabel>Filtrar por tipo</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {["stock_critico", "stock_bajo", "demanda_alta", "reposicion_urgente", "producto_descontinuado", "proveedor_retraso"].map((type) => (
+                    <DropdownMenuCheckboxItem
+                      key={type}
+                      checked={selectedAlertTypes.includes(type)}
+                      onCheckedChange={() => toggleFilter('alertTypes', type)}
+                    >
+                      {getAlertTypeLabel(type)}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
 
-          {/* Brands Filter */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="h-8">
-                Marcas
-                {selectedBrands.length > 0 && (
-                  <Badge variant="secondary" className="ml-1 h-4 px-1 text-xs">
-                    {selectedBrands.length}
-                  </Badge>
-                )}
-                <ChevronDown className="ml-1 h-3 w-3" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-48">
-              <DropdownMenuLabel>Filtrar por marca</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {uniqueBrands.map((brand) => (
-                <DropdownMenuCheckboxItem
-                  key={brand}
-                  checked={selectedBrands.includes(brand)}
-                  onCheckedChange={() => toggleFilter('brands', brand)}
-                >
-                  {brand}
-                </DropdownMenuCheckboxItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+              {/* Alert Priority Filter */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="h-8">
+                    Prioridad
+                    {selectedAlertPriorities.length > 0 && (
+                      <Badge variant="secondary" className="ml-1 h-4 px-1 text-xs">
+                        {selectedAlertPriorities.length}
+                      </Badge>
+                    )}
+                    <ChevronDown className="ml-1 h-3 w-3" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-48">
+                  <DropdownMenuLabel>Filtrar por prioridad</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {["alta", "media", "baja"].map((priority) => (
+                    <DropdownMenuCheckboxItem
+                      key={priority}
+                      checked={selectedAlertPriorities.includes(priority)}
+                      onCheckedChange={() => toggleFilter('alertPriorities', priority)}
+                    >
+                      {priority.charAt(0).toUpperCase() + priority.slice(1)}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
 
-          {/* Categories Filter */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="h-8">
-                Categorías
-                {selectedCategories.length > 0 && (
-                  <Badge variant="secondary" className="ml-1 h-4 px-1 text-xs">
-                    {selectedCategories.length}
-                  </Badge>
-                )}
-                <ChevronDown className="ml-1 h-3 w-3" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-48">
-              <DropdownMenuLabel>Filtrar por categoría</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {uniqueCategories.map((category) => (
-                <DropdownMenuCheckboxItem
-                  key={category}
-                  checked={selectedCategories.includes(category)}
-                  onCheckedChange={() => toggleFilter('categories', category)}
-                >
-                  {category}
-                </DropdownMenuCheckboxItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+              {/* Alert Status Filter */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="h-8">
+                    Estado
+                    {selectedAlertStatuses.length > 0 && (
+                      <Badge variant="secondary" className="ml-1 h-4 px-1 text-xs">
+                        {selectedAlertStatuses.length}
+                      </Badge>
+                    )}
+                    <ChevronDown className="ml-1 h-3 w-3" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-48">
+                  <DropdownMenuLabel>Filtrar por estado</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {["activa", "en_proceso", "resuelta"].map((status) => (
+                    <DropdownMenuCheckboxItem
+                      key={status}
+                      checked={selectedAlertStatuses.includes(status)}
+                      onCheckedChange={() => toggleFilter('alertStatuses', status)}
+                    >
+                      {status === "activa" ? "Activa" : status === "en_proceso" ? "En Proceso" : "Resuelta"}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
+          ) : (
+            <>
+              {/* Promotions Filter */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="h-8">
+                    Promociones
+                    {selectedPromotions.length > 0 && (
+                      <Badge variant="secondary" className="ml-1 h-4 px-1 text-xs">
+                        {selectedPromotions.length}
+                      </Badge>
+                    )}
+                    <ChevronDown className="ml-1 h-3 w-3" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-48">
+                  <DropdownMenuLabel>Filtrar por promociones</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {promotionOptions.map((option) => (
+                    <DropdownMenuCheckboxItem
+                      key={option}
+                      checked={selectedPromotions.includes(option)}
+                      onCheckedChange={() => toggleFilter('promotions', option)}
+                    >
+                      {option}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
 
-          {/* States Filter */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="h-8">
-                Estado
-                {selectedStates.length > 0 && (
-                  <Badge variant="secondary" className="ml-1 h-4 px-1 text-xs">
-                    {selectedStates.length}
-                  </Badge>
-                )}
-                <ChevronDown className="ml-1 h-3 w-3" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-48">
-              <DropdownMenuLabel>Filtrar por estado</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {uniqueStates.map((state) => (
-                <DropdownMenuCheckboxItem
-                  key={state}
-                  checked={selectedStates.includes(state)}
-                  onCheckedChange={() => toggleFilter('states', state)}
-                >
-                  {getStateLabel(state)}
-                </DropdownMenuCheckboxItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+              {/* Brands Filter */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="h-8">
+                    Marcas
+                    {selectedBrands.length > 0 && (
+                      <Badge variant="secondary" className="ml-1 h-4 px-1 text-xs">
+                        {selectedBrands.length}
+                      </Badge>
+                    )}
+                    <ChevronDown className="ml-1 h-3 w-3" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-48">
+                  <DropdownMenuLabel>Filtrar por marca</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {uniqueBrands.map((brand) => (
+                    <DropdownMenuCheckboxItem
+                      key={brand}
+                      checked={selectedBrands.includes(brand)}
+                      onCheckedChange={() => toggleFilter('brands', brand)}
+                    >
+                      {brand}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Categories Filter */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="h-8">
+                    Categorías
+                    {selectedCategories.length > 0 && (
+                      <Badge variant="secondary" className="ml-1 h-4 px-1 text-xs">
+                        {selectedCategories.length}
+                      </Badge>
+                    )}
+                    <ChevronDown className="ml-1 h-3 w-3" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-48">
+                  <DropdownMenuLabel>Filtrar por categoría</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {uniqueCategories.map((category) => (
+                    <DropdownMenuCheckboxItem
+                      key={category}
+                      checked={selectedCategories.includes(category)}
+                      onCheckedChange={() => toggleFilter('categories', category)}
+                    >
+                      {category}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* States Filter */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="h-8">
+                    Estado
+                    {selectedStates.length > 0 && (
+                      <Badge variant="secondary" className="ml-1 h-4 px-1 text-xs">
+                        {selectedStates.length}
+                      </Badge>
+                    )}
+                    <ChevronDown className="ml-1 h-3 w-3" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-48">
+                  <DropdownMenuLabel>Filtrar por estado</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {uniqueStates.map((state) => (
+                    <DropdownMenuCheckboxItem
+                      key={state}
+                      checked={selectedStates.includes(state)}
+                      onCheckedChange={() => toggleFilter('states', state)}
+                    >
+                      {getStateLabel(state)}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
+          )}
 
           {/* Clear Filters Button */}
           {getActiveFiltersCount() > 0 && (
@@ -519,7 +804,7 @@ export const OutOfStockTable = () => {
           </TabsContent>
 
           <TabsContent value="alerts" className="mt-6">
-            {renderTableContent()}
+            {renderAlertsContent()}
           </TabsContent>
         </Tabs>
       </CardContent>
@@ -634,6 +919,109 @@ export const OutOfStockTable = () => {
             </TableBody>
           </Table>
         </div>
+      </>
+    )
+  }
+
+  function renderAlertsContent() {
+    const filteredAlerts = getFilteredAlerts()
+
+    return (
+      <>
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Tipo de Alerta</TableHead>
+                <TableHead>Producto</TableHead>
+                <TableHead>Mensaje</TableHead>
+                <TableHead>Prioridad</TableHead>
+                <TableHead>Estado</TableHead>
+                <TableHead>Fecha</TableHead>
+                <TableHead>Cantidad Afectada</TableHead>
+                <TableHead>Asignado a</TableHead>
+                <TableHead>Resolución Estimada</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredAlerts.map((alert) => (
+                <TableRow key={alert.id} className="hover:bg-muted/50">
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <AlertTriangle className="h-4 w-4 text-orange-500" />
+                      <span className="font-medium">{getAlertTypeLabel(alert.type)}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex flex-col">
+                      <span className="font-medium">{alert.product}</span>
+                      <span className="text-xs text-muted-foreground">ID: {alert.productId}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="max-w-xs">
+                      <p className="text-sm text-wrap">{alert.message}</p>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {getPriorityBadge(alert.priority)}
+                  </TableCell>
+                  <TableCell>
+                    {getStatusBadge(alert.status)}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex flex-col">
+                      <span className="text-sm">{alert.timestamp.toLocaleDateString('es-ES')}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {alert.timestamp.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {alert.affectedQuantity ? (
+                      <div className="flex items-center gap-1">
+                        <Package className="h-4 w-4 text-muted-foreground" />
+                        <span className="font-medium">{alert.affectedQuantity}</span>
+                      </div>
+                    ) : (
+                      <span className="text-muted-foreground text-sm">N/A</span>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {alert.assignedTo ? (
+                      <div className="flex items-center gap-1">
+                        <Users className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm">{alert.assignedTo}</span>
+                      </div>
+                    ) : (
+                      <span className="text-muted-foreground text-sm">Sin asignar</span>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {alert.estimatedResolution ? (
+                      <div className="flex flex-col">
+                        <span className="text-sm">{alert.estimatedResolution.toLocaleDateString('es-ES')}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {Math.ceil((alert.estimatedResolution.getTime() - Date.now()) / (1000 * 60 * 60 * 24))} días
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="text-muted-foreground text-sm">Completada</span>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+
+        {filteredAlerts.length === 0 && (
+          <div className="text-center py-8 text-muted-foreground">
+            <AlertTriangle className="h-12 w-12 mx-auto mb-4 opacity-50" />
+            <p className="text-lg font-medium">No se encontraron alertas</p>
+            <p className="text-sm">No hay alertas que coincidan con los filtros seleccionados.</p>
+          </div>
+        )}
       </>
     )
   }
