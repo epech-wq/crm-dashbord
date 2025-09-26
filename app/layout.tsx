@@ -7,7 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { AuthProvider } from "@/contexts/auth-context"
 
 export const metadata: Metadata = {
-  title: "CRM Dashboard",
+  title: "OnTrack - CRM Dashboard",
   description: "Dashboard CRM con análisis de ventas y métricas",
   generator: "v0.app",
 }

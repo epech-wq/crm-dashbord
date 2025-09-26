@@ -37,6 +37,9 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
   return (
     <Card className="w-full max-w-md">
       <CardHeader className="space-y-1">
+        <div className="text-center mb-4">
+          <h1 className="text-3xl font-bold text-primary">OnTrack CRM</h1>
+        </div>
         <CardTitle className="text-2xl font-bold">Iniciar Sesión</CardTitle>
         <CardDescription>
           Ingresa tu email y contraseña para acceder

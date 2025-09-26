@@ -54,6 +54,9 @@ export function RegisterForm({ onToggleMode }: RegisterFormProps) {
   return (
     <Card className="w-full max-w-md">
       <CardHeader className="space-y-1">
+        <div className="text-center mb-4">
+          <h1 className="text-3xl font-bold text-primary">OnTrack CRM</h1>
+        </div>
         <CardTitle className="text-2xl font-bold">Crear Cuenta</CardTitle>
         <CardDescription>
           Ingresa tus datos para crear una nueva cuenta
