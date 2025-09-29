@@ -70,11 +70,12 @@ export const EstimatedRevenueChart = ({ data, hideFinancials = false, period = "
               cy="85%"
               startAngle={180}
               endAngle={0}
-              innerRadius={85}
-              outerRadius={120}
+              innerRadius={135}
+              outerRadius={150}
               paddingAngle={1}
               dataKey="value"
               stroke="none"
+              cornerRadius={10}
             >
               {chartData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.fill} />

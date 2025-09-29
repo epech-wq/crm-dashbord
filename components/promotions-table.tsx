@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search, Plus, Edit, Trash2, TrendingUp } from "lucide-react"
 import { mockPromotions, type Promotion } from "@/components/mock-data"
+import { NewPromotionModal } from "@/components/new-promotion-modal"
 
 const statusColors = {
   active: "bg-green-100 text-green-800 border-green-200",
@@ -25,9 +26,10 @@ const typeLabels = {
 }
 
 export function PromotionsTable() {
-  const [promotions] = useState<Promotion[]>(mockPromotions)
+  const [promotions, setPromotions] = useState<Promotion[]>(mockPromotions)
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const filteredPromotions = promotions.filter((promotion) => {
     const matchesSearch = promotion.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -52,6 +54,21 @@ export function PromotionsTable() {
     })
   }
 
+  const handleSavePromotion = (newPromotion: Omit<Promotion, "id" | "usageCount" | "salesBefore" | "salesAfter" | "salesBoostPercentage" | "createdDate" | "lastModified">) => {
+    const promotion: Promotion = {
+      ...newPromotion,
+      id: `PROMO${String(promotions.length + 1).padStart(3, '0')}`,
+      usageCount: 0,
+      salesBefore: 0,
+      salesAfter: 0,
+      salesBoostPercentage: 0,
+      createdDate: new Date().toISOString().split('T')[0],
+      lastModified: new Date().toISOString().split('T')[0],
+    }
+
+    setPromotions(prev => [...prev, promotion])
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -62,7 +79,7 @@ export function PromotionsTable() {
               Administra y monitorea todas las promociones activas
             </CardDescription>
           </div>
-          <Button>
+          <Button onClick={() => setIsModalOpen(true)}>
             <Plus className="h-4 w-4 mr-2" />
             Nueva Promoción
           </Button>
@@ -179,6 +196,12 @@ export function PromotionsTable() {
           </Table>
         </div>
       </CardContent>
+
+      <NewPromotionModal
+        open={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        onSave={handleSavePromotion}
+      />
     </Card>
   )
 }

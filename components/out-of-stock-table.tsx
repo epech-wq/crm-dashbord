@@ -789,9 +789,9 @@ export const OutOfStockTable = () => {
       </CardHeader>
       <CardContent>
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="all">Todos los Productos</TabsTrigger>
-            <TabsTrigger value="growth">Growth Drivers</TabsTrigger>
+            {/* <TabsTrigger value="growth">Growth Drivers</TabsTrigger> */}
             <TabsTrigger value="alerts">Alertas</TabsTrigger>
           </TabsList>
 
@@ -799,9 +799,9 @@ export const OutOfStockTable = () => {
             {renderTableContent()}
           </TabsContent>
 
-          <TabsContent value="growth" className="mt-6">
+          {/* <TabsContent value="growth" className="mt-6">
             {renderTableContent()}
-          </TabsContent>
+          </TabsContent> */}
 
           <TabsContent value="alerts" className="mt-6">
             {renderAlertsContent()}

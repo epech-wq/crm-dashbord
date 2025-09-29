@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Eye, Users, Building, Shield, Package, Tag } from "lucide-react"
 import { viewConfigs, type UserView } from "@/types/views"

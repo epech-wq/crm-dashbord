@@ -81,8 +81,8 @@ const getLayoutForView = (view: UserView) => {
         name: "Gestión de Promociones",
         widgets: {
           promotionMetrics: { visible: true, position: 1, size: "large" as const, rowsPerPage: 5 },
-          promotionPerformance: { visible: true, position: 2, size: "large" as const, rowsPerPage: 5 },
-          promotionsTable: { visible: true, position: 3, size: "large" as const, rowsPerPage: 10 },
+          promotionsTable: { visible: true, position: 2, size: "large" as const, rowsPerPage: 10 },
+          promotionPerformance: { visible: true, position: 3, size: "large" as const, rowsPerPage: 5 },
         },
         visibleMetrics: [],
         visibleCharts: [],
