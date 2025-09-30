@@ -10,20 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search, Plus, Edit, Trash2, TrendingUp } from "lucide-react"
 import { mockPromotions, type Promotion } from "@/components/mock-data"
 import { NewPromotionModal } from "@/components/new-promotion-modal"
-
-const statusColors = {
-  active: "bg-green-100 text-green-800 border-green-200",
-  inactive: "bg-gray-100 text-gray-800 border-gray-200",
-  scheduled: "bg-blue-100 text-blue-800 border-blue-200",
-  expired: "bg-red-100 text-red-800 border-red-200",
-}
-
-const typeLabels = {
-  percentage: "Porcentaje",
-  fixed: "Descuento Fijo",
-  bogo: "Compra y Obtén",
-  bundle: "Paquete",
-}
+import { formatCurrency, formatDate, statusColors, statusLabels, promotionTypeLabels } from "@/lib/format-utils"
 
 export function PromotionsTable() {
   const [promotions, setPromotions] = useState<Promotion[]>(mockPromotions)
@@ -38,21 +25,7 @@ export function PromotionsTable() {
     return matchesSearch && matchesStatus
   })
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-MX', {
-      style: 'currency',
-      currency: 'MXN',
-      minimumFractionDigits: 0,
-    }).format(amount)
-  }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-MX', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    })
-  }
 
   const handleSavePromotion = (newPromotion: Omit<Promotion, "id" | "usageCount" | "salesBefore" | "salesAfter" | "salesBoostPercentage" | "createdDate" | "lastModified">) => {
     const promotion: Promotion = {
@@ -138,7 +111,7 @@ export function PromotionsTable() {
                   </TableCell>
                   <TableCell>
                     <Badge variant="outline">
-                      {typeLabels[promotion.type]}
+                      {promotionTypeLabels[promotion.type]}
                     </Badge>
                   </TableCell>
                   <TableCell>
@@ -156,10 +129,8 @@ export function PromotionsTable() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Badge className={statusColors[promotion.status]}>
-                      {promotion.status === "active" ? "Activa" :
-                        promotion.status === "scheduled" ? "Programada" :
-                          promotion.status === "inactive" ? "Inactiva" : "Expirada"}
+                    <Badge className={statusColors.promotion[promotion.status]}>
+                      {statusLabels.promotion[promotion.status]}
                     </Badge>
                   </TableCell>
                   <TableCell>

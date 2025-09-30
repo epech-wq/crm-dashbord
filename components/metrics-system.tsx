@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { TrendingUp, TrendingDown, DollarSign, ShoppingCart, Users, Target, Clock, Percent, Minus, Filter, Trash2 } from "lucide-react"
 import { generateHistoricalData, mockOrders, type Order } from "@/components/mock-data"
+import { formatCurrency, formatPercentage, statusColors, statusLabels } from "@/lib/format-utils"
 
 export interface MetricData {
   current: number
@@ -92,14 +93,9 @@ export const generateMetricsData = (period: string): MetricsData => {
 export const formatMetricValue = (value: number, format: MetricData["format"]): string => {
   switch (format) {
     case "currency":
-      return new Intl.NumberFormat("es-MX", {
-        style: "currency",
-        currency: "MXN",
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2,
-      }).format(value)
+      return formatCurrency(value)
     case "percentage":
-      return `${value.toFixed(1)}%`
+      return formatPercentage(value)
     case "number":
       if (value >= 1000) {
         return new Intl.NumberFormat("es-MX", {
@@ -309,18 +305,7 @@ export const RecentOrdersTable = ({ orders = mockOrders.slice(0, 5), showFilter 
   }
 
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case "Completado":
-        return "bg-green-100 text-green-800"
-      case "Pendiente":
-        return "bg-yellow-100 text-yellow-800"
-      case "En proceso":
-        return "bg-blue-100 text-blue-800"
-      case "Cancelado":
-        return "bg-red-100 text-red-800"
-      default:
-        return "bg-gray-100 text-gray-800"
-    }
+    return statusColors.order[status as keyof typeof statusColors.order] || "bg-gray-100 text-gray-800"
   }
 
   const getInitialsColor = (name: string) => {

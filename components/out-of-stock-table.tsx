@@ -200,14 +200,14 @@ const generateExtendedProducts = (): ExtendedProduct[] => {
 // Add more products for a more comprehensive table
 const generateAdditionalProducts = (): ExtendedProduct[] => {
   const additionalProducts = [
-    { name: "Mobile App Builder", category: "Software" as const, price: 9500 },
-    { name: "Security Suite Pro", category: "Software" as const, price: 18000 },
-    { name: "Cloud Storage 1TB", category: "Servicios" as const, price: 3600 },
-    { name: "Laptop Workstation", category: "Hardware" as const, price: 35000 },
-    { name: "Training Workshop", category: "Consultoría" as const, price: 8000 },
-    { name: "API Gateway", category: "Software" as const, price: 12500 },
-    { name: "Backup Solution", category: "Servicios" as const, price: 4800 },
-    { name: "Network Switch", category: "Hardware" as const, price: 15000 },
+    { name: "Constructor de Apps Móviles", category: "Software" as const, price: 9500 },
+    { name: "Suite de Seguridad Empresarial", category: "Software" as const, price: 18000 },
+    { name: "Almacenamiento en la Nube 1TB", category: "Servicios" as const, price: 3600 },
+    { name: "Estación de Trabajo Profesional", category: "Hardware" as const, price: 35000 },
+    { name: "Capacitación Especializada", category: "Consultoría" as const, price: 8000 },
+    { name: "Gateway de APIs", category: "Software" as const, price: 12500 },
+    { name: "Solución de Respaldo Automático", category: "Servicios" as const, price: 4800 },
+    { name: "Switch de Red Empresarial", category: "Hardware" as const, price: 15000 },
   ]
 
   const brands = ["TechCorp", "InnovaLabs", "DataSoft", "CloudTech", "SystemPro", "DevTools"]

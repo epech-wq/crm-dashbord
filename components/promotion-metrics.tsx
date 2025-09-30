@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Target, DollarSign, Percent, Users, TrendingUp } from "lucide-react"
 import { mockPromotions } from "@/components/mock-data"
+import { formatCurrency, formatPercentage } from "@/lib/format-utils"
 
 export function PromotionMetrics() {
   const activePromotions = mockPromotions.filter(p => p.status === "active")
@@ -28,13 +29,7 @@ export function PromotionMetrics() {
 
   const promotionROI = totalDiscountGiven > 0 ? (totalSalesBoost / totalDiscountGiven) * 100 : 0
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-MX', {
-      style: 'currency',
-      currency: 'MXN',
-      minimumFractionDigits: 0,
-    }).format(amount)
-  }
+
 
   const getBadgeVariant = (changeType: "positive" | "negative") => {
     return changeType === "positive"
@@ -57,7 +52,7 @@ export function PromotionMetrics() {
     },
     {
       title: "Boost Promedio",
-      value: `${averageBoostPercentage.toFixed(1)}%`,
+      value: formatPercentage(averageBoostPercentage),
       change: "+3.1%",
       changeType: "positive" as const,
     },
@@ -69,7 +64,7 @@ export function PromotionMetrics() {
     },
     {
       title: "ROI de Promociones",
-      value: `${promotionROI.toFixed(1)}%`,
+      value: formatPercentage(promotionROI),
       change: "+12.3%",
       changeType: "positive" as const,
     },

@@ -1,6 +1,7 @@
 "use client"
 
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Line, ComposedChart } from "recharts"
+import { formatCurrency, formatPercentage } from "@/lib/format-utils"
 
 interface StatisticsChartProps {
   data: any
@@ -30,15 +31,7 @@ export const StatisticsChart = ({ data, hideFinancials = false, period = "month"
   const ytdChange = previousYtdSales > 0 ? ((ytdSales - previousYtdSales) / previousYtdSales) * 100 : 0
   const goalProgress = (ytdSales / yearlyGoal) * 100
 
-  // Format currency
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-MX', {
-      style: 'currency',
-      currency: 'MXN',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount)
-  }
+
 
 
 
@@ -104,7 +97,7 @@ export const StatisticsChart = ({ data, hideFinancials = false, period = "month"
         <div className="text-center">
           <div className="text-lg font-bold text-foreground">{formatCurrency(currentYearSales)}</div>
           <div className={`text-sm font-medium ${ytyChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-            {ytyChange >= 0 ? '+' : ''}{ytyChange.toFixed(1)}%
+            {ytyChange >= 0 ? '+' : ''}{formatPercentage(ytyChange)}
           </div>
           <div className="text-xs text-muted-foreground">Ventas YTY</div>
         </div>
@@ -113,7 +106,7 @@ export const StatisticsChart = ({ data, hideFinancials = false, period = "month"
         <div className="text-center">
           <div className="text-lg font-bold text-foreground">{formatCurrency(ytdSales)}</div>
           <div className={`text-sm font-medium ${ytdChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-            {ytdChange >= 0 ? '+' : ''}{ytdChange.toFixed(1)}%
+            {ytdChange >= 0 ? '+' : ''}{formatPercentage(ytdChange)}
           </div>
           <div className="text-xs text-muted-foreground">Ventas YTD</div>
         </div>
@@ -122,7 +115,7 @@ export const StatisticsChart = ({ data, hideFinancials = false, period = "month"
         <div className="text-center">
           <div className="text-lg font-bold text-foreground">{formatCurrency(yearlyGoal)}</div>
           <div className={`text-sm font-medium ${goalProgress >= 15 ? 'text-green-600' : 'text-orange-600'}`}>
-            {goalProgress.toFixed(1)}%
+            {formatPercentage(goalProgress)}
           </div>
           <div className="text-xs text-muted-foreground">Meta Anual</div>
         </div>
